@@ -9,3 +9,12 @@ node_modules/
 uploads/
 *.tar
 *.tar.gz
+# IDE 配置
+.idea/
+# WorkBuddy 本地记忆（非项目代码）
+.workbuddy/
+# 日志与本地运行时产物
+*.log
+celerybeat-schedule*
+# 误操作产生的嵌套目录（12.py/11.py/11.py）
+12.py/

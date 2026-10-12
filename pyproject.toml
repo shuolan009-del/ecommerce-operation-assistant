@@ -1,0 +1,11 @@
+[project]
+name = "ecommerce-operation-assistant-source-20260815"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.141.1",
+    "ollama>=0.6.3",
+    "pydantic-settings>=2.15.0",
+    "pytest>=9.1.1",
+    "sqlalchemy>=2.1.1",
+]

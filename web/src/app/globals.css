@@ -1,26 +1,136 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: light;
+
+  --background: #f7f8fb;
+  --foreground: #0f172a;
+  --app-font-sans: "Inter", "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, Helvetica, sans-serif;
+  --app-font-mono: "Cascadia Code", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+
+  /* ---- 页面与表面 ---- */
+  --bg-page: #f7f8fb; /* 页面底：沿用现有值 */
+  --surface: #ffffff; /* 白卡表面 */
+  --surface-muted: #f8fafc; /* slate-50 分区 / 表头底 */
+  --surface-subtle: #f1f5f9; /* slate-100 行 hover 底 / 中性胶囊底 */
+
+  /* ---- 描边两级 ---- */
+  --border: #e2e8f0; /* slate-200 常规描边 */
+  --border-subtle: #f1f5f9; /* slate-100 弱化描边 */
+
+  /* ---- 文字三级 ---- */
+  --text-strong: #020617; /* slate-950 标题 / 主数值 */
+  --text-default: #475569; /* slate-600 正文 */
+  --text-muted: #94a3b8; /* slate-400 弱提示 */
+
+  /* ---- 品牌色（cyan 系，沿用 Agent 入口色） ---- */
+  --brand: #0e7490; /* cyan-700 主品牌 */
+  --brand-strong: #155e75; /* cyan-800 品牌 hover */
+  --brand-soft: #ecfeff; /* cyan-50 品牌浅底 */
+  --brand-accent: #06b6d4; /* cyan-500 侧栏选中竖条 */
+
+  /* ---- 主操作色（slate 系深色按钮） ---- */
+  --accent: #020617; /* slate-950 */
+  --accent-strong: #1e293b; /* slate-800 hover */
+
+  /* ---- 语义四色 + soft 底 ---- */
+  --success: #047857; /* emerald-700 */
+  --success-soft: #ecfdf5; /* emerald-50 */
+  --warning: #b45309; /* amber-700 */
+  --warning-soft: #fffbeb; /* amber-50 */
+  --danger: #be123c; /* rose-700 */
+  --danger-soft: #fff1f2; /* rose-50 */
+  --info: #0369a1; /* sky-700 */
+  --info-soft: #f0f9ff; /* sky-50 */
+
+  /* ---- 侧栏深色 ---- */
+  --sidebar: #0f172a; /* slate-900 侧栏底 */
+  --sidebar-active: #1e293b; /* slate-800 选中项底 */
+  --sidebar-fg: #94a3b8; /* slate-400 未选中文字 */
+  --sidebar-fg-active: #ffffff; /* 选中文字 */
+
+  /* ---- 圆角三档（普通变量，可 rounded-[var(--radius-md)] 使用） ---- */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+
+  /* ---- 阴影 ---- */
+  --card-shadow: 0 1px 2px 0 rgb(15 23 42 / 0.04);
+
+  /* ---- 布局 ---- */
+  --sidebar-width: 208px;
+  --topbar-height: 52px;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --font-sans: var(--app-font-sans);
+  --font-mono: var(--app-font-mono);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /* 页面与表面 */
+  --color-page: var(--bg-page);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-surface-subtle: var(--surface-subtle);
+
+  /* 描边 */
+  --color-hairline: var(--border);
+  --color-hairline-subtle: var(--border-subtle);
+
+  /* 文字 */
+  --color-strong: var(--text-strong);
+  --color-body: var(--text-default);
+  --color-muted: var(--text-muted);
+
+  /* 品牌 */
+  --color-brand: var(--brand);
+  --color-brand-strong: var(--brand-strong);
+  --color-brand-soft: var(--brand-soft);
+  --color-brand-accent: var(--brand-accent);
+
+  /* 主操作 */
+  --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
+
+  /* 语义 */
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-info: var(--info);
+  --color-info-soft: var(--info-soft);
+
+  /* 侧栏 */
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-active: var(--sidebar-active);
+  --color-sidebar-fg: var(--sidebar-fg);
+  --color-sidebar-fg-active: var(--sidebar-fg-active);
+
+  /* 阴影 */
+  --shadow-card: var(--card-shadow);
+
+  /* 布局 */
+  --spacing-sidebar: var(--sidebar-width);
+  --spacing-topbar: var(--topbar-height);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--app-font-sans);
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+*:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
 }
