@@ -59,6 +59,4 @@ docker-compose.yml 全栈编排（mysql / redis / postgres / api / worker / web�
 
 ## 测试
 
-```bash
-cd api && uv run pytest
-```
+> 单元测试代码已在 2026-10-14 仓库瘦身中移除（运行时不依赖）；如需恢复，见 git 历史中的 `api/tests/`。
