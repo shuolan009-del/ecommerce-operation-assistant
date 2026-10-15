@@ -1,4 +1,4 @@
-# 电商商品运营助手（ecommerce-operation-assistant）
+# AI电商运营助手（ecommerce-operation-assistant）
 
 基于 LangGraph 多智能体的电商商品运营平台：输入商品与经营数据，自动完成
 「上下文采集 → 经营诊断 → 创意生成（主图 / 视频脚本）→ 质量审核」全流程，

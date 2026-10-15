@@ -17,7 +17,7 @@ def _is_placeholder_or_weak(value: str,*,min_length: int) -> bool:
 
 class Settings(BaseSettings):
 
-    app_name: str = "Ecommerce Operation Assistant API"
+    app_name: str = "AI电商运营助手 API"
     app_env: str = Field(default="development", alias="APP_ENV")
     database_url: str = Field(..., alias="DATABASE_URL")
     api_cors_origins: str = Field(default="http://localhost:3000,http://127.0.0.1:3000", alias="API_CORS_ORIGINS")
