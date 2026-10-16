@@ -13,7 +13,7 @@ export function TableShell({
   return (
     <div
       className={[
-        "overflow-hidden rounded-lg border border-slate-200 bg-white",
+        "overflow-hidden rounded-lg border border-hairline bg-surface",
         className ?? "",
       ]
         .filter(Boolean)
@@ -41,7 +41,7 @@ export function TableHead({
     <div
       style={{ gridTemplateColumns: columns } as CSSProperties}
       className={[
-        "grid items-center gap-3 border-b border-slate-200 bg-slate-50 px-4 py-2.5 text-xs font-semibold text-slate-500",
+        "grid items-center gap-3 border-b border-hairline bg-surface-muted px-4 py-2.5 text-xs font-semibold text-muted",
         className ?? "",
       ]
         .filter(Boolean)
@@ -66,7 +66,7 @@ export function TableRow({
     <div
       style={{ gridTemplateColumns: columns } as CSSProperties}
       className={[
-        "grid items-center gap-3 border-b border-slate-100 px-4 py-3 text-sm transition-colors last:border-0 hover:bg-slate-50",
+        "t-row grid items-center gap-3 border-b border-hairline-subtle px-4 py-3 text-sm transition-colors last:border-0 hover:bg-surface-subtle",
         className ?? "",
       ]
         .filter(Boolean)

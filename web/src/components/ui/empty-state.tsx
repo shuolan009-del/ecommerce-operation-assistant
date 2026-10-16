@@ -27,13 +27,13 @@ export function EmptyState({
         .join(" ")}
     >
       {icon ? (
-        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-surface-subtle text-muted">
           {icon}
         </div>
       ) : null}
-      <p className="text-sm font-medium text-slate-700">{title}</p>
+      <p className="text-sm font-medium text-body">{title}</p>
       {description ? (
-        <p className="max-w-sm text-xs leading-5 text-slate-500">{description}</p>
+        <p className="max-w-sm text-xs leading-5 text-muted">{description}</p>
       ) : null}
       {action ? <div className="mt-1">{action}</div> : null}
     </div>

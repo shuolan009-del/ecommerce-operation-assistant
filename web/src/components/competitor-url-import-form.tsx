@@ -34,7 +34,7 @@ export function CompetitorUrlImportForm({ canEdit = true, productId }: Competito
   return (
     <form action={`/products/${productId}/competitors/import-url`} method="post" className="space-y-4">
       <div className="flex items-center gap-3">
-        <div className="flex h-9 w-9 items-center justify-center rounded-md bg-emerald-600 text-white">
+        <div className="flex h-9 w-9 items-center justify-center rounded-md bg-brand text-white">
           <ScanSearch className="h-4 w-4" aria-hidden="true" />
         </div>
         <div>

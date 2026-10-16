@@ -209,7 +209,7 @@ function generationJobStatusLabel(status: GenerationJob["status"]): string {
 function JsonPanel({ title, value }: { title: string; value: unknown }) {
   return (
     <Card title={title}>
-      <pre className="max-h-[420px] overflow-auto rounded-md bg-accent p-3 text-xs leading-5 text-slate-100">
+      <pre className="max-h-[420px] overflow-auto rounded-md bg-accent p-3 text-xs leading-5 text-white">
         {JSON.stringify(value, null, 2)}
       </pre>
     </Card>

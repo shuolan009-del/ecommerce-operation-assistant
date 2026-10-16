@@ -1,0 +1,168 @@
+/* ============================================================================
+   theme-tokens.css — 双主题设计令牌（agri 农业温暖 / neu 新拟态）
+   约定：「颜色」可换肤，「品牌色」不换。嘉禾绿/禾金棕两主题共用。
+   ============================================================================ */
+
+:root,
+[data-theme="agri"] {
+  /* ── 背景层 ── */
+  --t-bg-base: #FBF6EC;          /* 页面底 = 米黄纸 */
+  --t-bg-sunk: #F5EDDD;          /* 下沉层 = 纸-2（表头/输入框底） */
+  --t-bg-kraft: #EFE3CE;         /* 牛皮纸 */
+  --t-bg-light: #FFFFFF;         /* 新拟态亮影（agri 下仅占位） */
+  --t-bg-dark: #C3CFC5;          /* 新拟态暗影（agri 下仅占位） */
+  --t-surface: #FFFDF8;          /* 卡片面 */
+  --t-surface-2: #FFFFFF;        /* 纯白面（按钮/搜索框） */
+  --t-surface-muted: #F5EDDD;
+  --t-surface-hover: #F1F8F1;    /* 行 hover = 品牌嫩绿 tint */
+  --t-surface-field: #FFFFFF;
+
+  /* ── 文字三阶 ── */
+  --t-ink-1: #3B2E1E;            /* 主文字 暖棕 */
+  --t-ink-2: #5C4A33;            /* 次要 */
+  --t-ink-3: #8A7757;            /* 弱化/占位 */
+
+  /* ── 描边 ── */
+  --t-line: #E4D8C1;
+  --t-line-strong: #D2C1A3;
+  --t-line-hair: #EFE4D2;
+  --t-line-focus: #2E7D32;
+
+  /* ── 圆角 ── */
+  --t-r-xs: 4px; --t-r-sm: 8px; --t-r-md: 10px; --t-r-lg: 16px; --t-r-xl: 22px; --t-r-full: 9999px;
+
+  /* ── 投影（棕调，不脏不灰）── */
+  --t-sh-sm: 0 1px 2px rgba(107,74,34,.08);
+  --t-sh-md: 0 4px 14px rgba(107,74,34,.10);
+  --t-sh-lg: 0 14px 32px rgba(107,74,34,.14);
+
+  /* ── 新拟态双阴影（agri 下不会被引用，仅避免未定义）── */
+  --t-sh-out: 9px 9px 20px var(--t-bg-dark), -9px -9px 20px var(--t-bg-light);
+  --t-sh-out-sm: 5px 5px 12px var(--t-bg-dark), -5px -5px 12px var(--t-bg-light);
+  --t-sh-out-xs: 3px 3px 7px var(--t-bg-dark), -3px -3px 7px var(--t-bg-light);
+  --t-sh-in: inset 6px 6px 13px var(--t-bg-dark), inset -6px -6px 13px var(--t-bg-light);
+  --t-sh-in-sm: inset 3px 3px 7px var(--t-bg-dark), inset -3px -3px 7px var(--t-bg-light);
+  --t-sh-out-hover: 12px 12px 26px var(--t-bg-dark), -12px -12px 26px var(--t-bg-light);
+
+  /* ── 形态开关：控制「描边 or 阴影」── */
+  --t-card-border: 1px solid var(--t-line);
+  --t-card-shadow: var(--t-sh-sm);
+  --t-card-bg: var(--t-surface);
+  --t-control-border: 1px solid var(--t-line-strong);
+  --t-control-shadow: var(--t-sh-sm);
+  --t-table-head-bg: var(--t-bg-sunk);
+  --t-table-row-bg: transparent;
+  --t-table-row-hover-bg: var(--t-surface-hover);
+
+  /* ── 纸张纹理（v4 原稿 body 背景，5 层）── */
+  --t-tex-body:
+    radial-gradient(680px 380px at 0% 0%, rgba(184,130,60,.12), transparent 60%),
+    radial-gradient(760px 420px at 100% 4%, rgba(46,125,50,.10), transparent 62%),
+    radial-gradient(600px 400px at 50% 108%, rgba(184,130,60,.10), transparent 60%),
+    repeating-linear-gradient(45deg, rgba(184,130,60,.035) 0 2px, transparent 2px 7px),
+    radial-gradient(rgba(184,130,60,.14) 1px, transparent 1px);
+  --t-tex-body-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%, 22px 22px;
+  --t-tex-body-attachment: fixed;
+
+  /* 侧栏纹理：顶部嫩绿晕染 + 竖向渐变 */
+  --t-tex-sidebar:
+    radial-gradient(240px 120px at 30% 0%, rgba(46,125,50,.12), transparent 70%),
+    linear-gradient(180deg, var(--t-surface), var(--t-bg-kraft));
+
+  /* ── 侧栏形态：浅色悬浮卡 ── */
+  --t-sidebar-bg: var(--t-tex-sidebar);
+  --t-sidebar-shadow: none;
+  --t-sidebar-fg: var(--t-ink-2);
+  --t-sidebar-fg-dim: var(--t-ink-3);
+  --t-sidebar-active-bg: var(--primary);
+  --t-sidebar-active-fg: #FFFFFF;
+  --t-sidebar-active-accent: transparent;
+}
+
+[data-theme="neu"] {
+  /* ── 背景层（底座三色）── */
+  --t-bg-base: #E7EDE8;
+  --t-bg-sunk: #E7EDE8;
+  --t-bg-kraft: #E7EDE8;
+  --t-bg-light: #FFFFFF;
+  --t-bg-dark: #C3CFC5;
+  --t-surface: #E7EDE8;          /* 卡片与页面同色，靠阴影分层 */
+  --t-surface-2: #E7EDE8;
+  --t-surface-muted: #E7EDE8;
+  --t-surface-hover: #E7EDE8;
+  --t-surface-field: #E7EDE8;
+
+  /* ── 文字（沿用 slate 中性阶）── */
+  --t-ink-1: #1E293B;
+  --t-ink-2: #475569;
+  --t-ink-3: #94A3B8;
+
+  /* ── 描边：新拟态无边框，用透明占位保持盒模型不跳动 ── */
+  --t-line: transparent;
+  --t-line-strong: transparent;
+  --t-line-hair: transparent;
+  --t-line-focus: var(--primary);
+
+  /* 品牌/语义/圆角：与 agri 一致，不覆写 */
+
+  /* ── 双阴影四档（v10 原值）── */
+  --t-sh-out: 9px 9px 20px var(--t-bg-dark), -9px -9px 20px var(--t-bg-light);
+  --t-sh-out-sm: 5px 5px 12px var(--t-bg-dark), -5px -5px 12px var(--t-bg-light);
+  --t-sh-out-xs: 3px 3px 7px var(--t-bg-dark), -3px -3px 7px var(--t-bg-light);
+  --t-sh-in: inset 6px 6px 13px var(--t-bg-dark), inset -6px -6px 13px var(--t-bg-light);
+  --t-sh-in-sm: inset 3px 3px 7px var(--t-bg-dark), inset -3px -3px 7px var(--t-bg-light);
+  --t-sh-out-hover: 12px 12px 26px var(--t-bg-dark), -12px -12px 26px var(--t-bg-light);
+  --t-sh-focus-ring: 0 0 0 3px var(--primary-soft);
+
+  /* 兼容三档名 */
+  --t-sh-sm: var(--t-sh-out-xs);
+  --t-sh-md: var(--t-sh-out-sm);
+  --t-sh-lg: var(--t-sh-out);
+
+  /* ── 形态开关 ── */
+  --t-card-border: 1px solid transparent;
+  --t-card-shadow: var(--t-sh-out);
+  --t-card-bg: var(--t-surface);
+  --t-control-border: 1px solid transparent;
+  --t-control-shadow: var(--t-sh-out-sm);
+  --t-table-head-bg: transparent;
+  --t-table-row-bg: var(--t-sh-out-xs);
+  --t-table-row-hover-bg: var(--t-sh-out-sm);
+
+  /* ── 纹理：取消纸纹，只留柔雾渐变 ── */
+  --t-tex-body: none;
+  --t-tex-body-size: auto;
+  --t-tex-body-attachment: fixed;
+  --t-tex-sidebar: none;
+
+  /* ── 侧栏：同色浮起，选中＝凹陷 ── */
+  --t-sidebar-bg: #E7EDE8;
+  --t-sidebar-shadow: var(--t-sh-out);
+  --t-sidebar-fg: var(--t-ink-2);
+  --t-sidebar-fg-dim: var(--t-ink-3);
+  --t-sidebar-active-bg: transparent;
+  --t-sidebar-active-fg: var(--primary-hover);
+  --t-sidebar-active-accent: var(--primary);
+}
+
+/* ── 表格行阴影（neu 下做行分隔，agri 下无）── */
+:root,
+[data-theme="agri"] {
+  --t-table-row-shadow: none;
+  --t-table-row-hover-shadow: none;
+}
+[data-theme="neu"] {
+  --t-table-row-shadow: var(--t-sh-out-xs);
+  --t-table-row-hover-shadow: var(--t-sh-out-sm);
+}
+
+@layer components {
+  /* 表格行：neu 下用双阴影做行分隔，agri 下无阴影靠 hover 底色 */
+  .t-row {
+    background: var(--t-table-row-bg, transparent);
+    box-shadow: var(--t-table-row-shadow, none);
+  }
+  .t-row:hover {
+    box-shadow: var(--t-table-row-hover-shadow, none);
+  }
+}

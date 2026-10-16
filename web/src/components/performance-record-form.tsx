@@ -41,7 +41,7 @@ export function PerformanceRecordForm({
   return (
     <form action={`/products/${productId}/performance-records/create`} method="post" className="space-y-4">
       <div className="flex items-center gap-3">
-        <div className="flex h-9 w-9 items-center justify-center rounded-md bg-amber-600 text-white">
+        <div className="flex h-9 w-9 items-center justify-center rounded-md bg-warning text-white">
           <BarChart3 className="h-4 w-4" aria-hidden="true" />
         </div>
         <div>

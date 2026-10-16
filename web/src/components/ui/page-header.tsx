@@ -32,7 +32,7 @@ export function PageHeader({
         {crumbs && crumbs.length > 0 ? (
           <nav
             aria-label="面包屑"
-            className="mb-2 flex flex-wrap items-center gap-1.5 text-xs text-slate-500"
+            className="mb-2 flex flex-wrap items-center gap-1.5 text-xs text-muted"
           >
             {crumbs.map((crumb, index) => {
               const isLast = index === crumbs.length - 1;
@@ -42,16 +42,16 @@ export function PageHeader({
                   key={`${crumb.label}-${index}`}
                   className="inline-flex items-center gap-1.5"
                 >
-                  {index > 0 ? <span className="text-slate-300">/</span> : null}
+                  {index > 0 ? <span className="text-muted">/</span> : null}
                   {clickable ? (
                     <Link
                       href={crumb.href as string}
-                      className="transition-colors hover:text-slate-700"
+                      className="transition-colors hover:text-body"
                     >
                       {crumb.label}
                     </Link>
                   ) : (
-                    <span className={isLast ? "text-slate-700" : undefined}>
+                    <span className={isLast ? "text-body" : undefined}>
                       {crumb.label}
                     </span>
                   )}
@@ -66,11 +66,11 @@ export function PageHeader({
             aria-hidden="true"
             className="h-4 w-[3px] shrink-0 rounded-full bg-brand"
           />
-          <h1 className="truncate text-base font-semibold text-slate-950">{title}</h1>
+          <h1 className="truncate text-base font-semibold text-strong">{title}</h1>
         </div>
 
         {description ? (
-          <p className="mt-1.5 pl-[13px] text-sm text-slate-500">{description}</p>
+          <p className="mt-1.5 pl-[13px] text-sm text-muted">{description}</p>
         ) : null}
       </div>
 

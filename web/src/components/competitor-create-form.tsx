@@ -27,7 +27,7 @@ export function CompetitorCreateForm({ canEdit = true, productId }: CompetitorCr
   return (
     <form action={`/products/${productId}/competitors/create`} method="post" className="space-y-4">
       <div className="flex items-center gap-3">
-        <div className="flex h-9 w-9 items-center justify-center rounded-md bg-sky-600 text-white">
+        <div className="flex h-9 w-9 items-center justify-center rounded-md bg-info text-white">
           <LinkIcon className="h-4 w-4" aria-hidden="true" />
         </div>
         <div>

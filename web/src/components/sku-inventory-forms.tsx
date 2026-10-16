@@ -21,7 +21,7 @@ export function SkuCreateForm({ canEdit = true, productId }: { canEdit?: boolean
   return (
     <form action={`/products/${productId}/skus/create`} method="post" className="space-y-4">
       <div className="flex items-center gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-md bg-cyan-700 text-white">
+        <div className="flex h-10 w-10 items-center justify-center rounded-md bg-brand text-white">
           <Boxes className="h-5 w-5" aria-hidden="true" />
         </div>
         <div>
@@ -155,7 +155,7 @@ export function SkuInventoryPanel({
       ) : null}
 
       <TableShell className="mt-5">
-        <div className="hidden border-b border-hairline bg-surface-muted px-4 py-2.5 text-xs font-semibold text-slate-500 lg:grid lg:grid-cols-[1.1fr_0.8fr_0.7fr_0.7fr_0.7fr]">
+        <div className="hidden border-b border-hairline bg-surface-muted px-4 py-2.5 text-xs font-semibold text-muted lg:grid lg:grid-cols-[1.1fr_0.8fr_0.7fr_0.7fr_0.7fr]">
           <span>SKU</span>
           <span>价格</span>
           <span>现货</span>
@@ -165,7 +165,7 @@ export function SkuInventoryPanel({
         {safeSkus.length === 0 ? (
           <EmptyState compact title="还没有 SKU，先在左侧创建一个规格。" />
         ) : (
-          <div className="divide-y divide-slate-200">
+          <div className="divide-y divide-hairline">
             {safeSkus.map((sku) => (
               <div key={sku.id} className="px-4 py-4 transition-colors hover:bg-surface-muted">
                 <div className="grid gap-3 text-sm lg:grid-cols-[1.1fr_0.8fr_0.7fr_0.7fr_0.7fr] lg:items-center">

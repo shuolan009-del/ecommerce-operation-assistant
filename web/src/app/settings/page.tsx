@@ -339,7 +339,7 @@ function StatusPill({ label, value, active }: { label: string; value: string; ac
       <p className="text-xs text-muted">{label}</p>
       <div className="mt-1.5 flex items-center gap-2">
         <span
-          className={`h-2 w-2 shrink-0 rounded-full ${active ? "bg-success" : "bg-slate-300"}`}
+          className={`h-2 w-2 shrink-0 rounded-full ${active ? "bg-success" : "bg-surface-muted"}`}
           aria-hidden="true"
         />
         <p className="truncate text-sm font-semibold text-strong">{value}</p>

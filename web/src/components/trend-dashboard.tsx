@@ -1,10 +1,16 @@
 "use client";
 
 import { TrendingDown, TrendingUp } from "lucide-react";
-import * as echarts from "echarts";
+import * as echarts from "echarts/core";
+import { BarChart, LineChart } from "echarts/charts";
+import { GridComponent, LegendComponent, TooltipComponent } from "echarts/components";
+import { CanvasRenderer } from "echarts/renderers";
+
+echarts.use([BarChart, LineChart, GridComponent, LegendComponent, TooltipComponent, CanvasRenderer]);
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import { Badge, Card, EmptyState, PageHeader, buttonClass } from "@/components/ui";
+import { useTheme } from "./theme-provider";
 
 export type TrendRecord = {
   periodStart: string;
@@ -56,6 +62,13 @@ type MetricKey = (typeof METRICS)[number]["key"];
 const SERIES_COLORS = ["#0891b2", "#059669", "#d97706", "#e11d48", "#0284c7", "#7c3aed"];
 type Chart = ReturnType<typeof echarts.init>;
 
+/** 读取当前主题下的 CSS 变量值（echarts 画在 canvas 上，CSS 变量管不到，必须 JS 取值）。 */
+function readToken(name: string, fallback: string): string {
+  if (typeof window === "undefined") return fallback;
+  const value = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  return value || fallback;
+}
+
 function toNumber(value: string | number | null | undefined): number | null {
   if (value === null || value === undefined) return null;
   const parsed = typeof value === "number" ? value : Number(value);
@@ -76,6 +89,7 @@ function formatValue(value: number, unit: string): string {
 
 /** 商品趋势看板：多商品投放时序叠加对照 + 竞品价格/销量提示对照。 */
 export function TrendDashboard({ products }: { products: TrendProduct[] }) {
+  const { theme } = useTheme();
   const [selectedIds, setSelectedIds] = useState<number[]>(() => products.slice(0, 2).map((p) => p.id));
   const [metric, setMetric] = useState<MetricKey>("conversions");
   const [baselineId, setBaselineId] = useState<number | null>(products[0]?.id ?? null);
@@ -154,23 +168,23 @@ export function TrendDashboard({ products }: { products: TrendProduct[] }) {
         valueFormatter: (value: unknown) =>
           typeof value === "number" ? formatValue(value, metricDef.unit) : "-",
       },
-      legend: { top: 0, textStyle: { color: "#475569", fontSize: 12 } },
+      legend: { top: 0, textStyle: { color: readToken("--t-ink-2", "#5C4A33"), fontSize: 12 } },
       grid: { left: 8, right: 16, top: 40, bottom: 8, containLabel: true },
       xAxis: {
         type: "category",
         boundaryGap: false,
         data: axis,
-        axisLine: { lineStyle: { color: "#e2e8f0" } },
-        axisLabel: { color: "#94a3b8", fontSize: 11 },
+        axisLine: { lineStyle: { color: readToken("--t-line", "#E4D8C1") } },
+        axisLabel: { color: readToken("--t-ink-3", "#8A7757"), fontSize: 11 },
       },
       yAxis: {
         type: "value",
-        splitLine: { lineStyle: { color: "#f1f5f9" } },
-        axisLabel: { color: "#94a3b8", fontSize: 11 },
+        splitLine: { lineStyle: { color: readToken("--t-ink-3", "#8A7757"), opacity: 0.35 } },
+        axisLabel: { color: readToken("--t-ink-3", "#8A7757"), fontSize: 11 },
       },
       series,
-    } satisfies echarts.EChartsOption);
-  }, [selected, metric, metricDef.unit]);
+    } satisfies echarts.EChartsCoreOption);
+  }, [selected, metric, metricDef.unit, theme]);
 
   // 价格对照：本品 vs 竞品
   useEffect(() => {
@@ -198,17 +212,17 @@ export function TrendDashboard({ products }: { products: TrendProduct[] }) {
         type: "category",
         data: names,
         axisLabel: {
-          color: "#94a3b8",
+          color: readToken("--t-ink-3", "#8A7757"),
           fontSize: 11,
           interval: 0,
           formatter: (value: string) => (value.length > 8 ? `${value.slice(0, 8)}…` : value),
         },
-        axisLine: { lineStyle: { color: "#e2e8f0" } },
+        axisLine: { lineStyle: { color: readToken("--t-line", "#E4D8C1") } },
       },
       yAxis: {
         type: "value",
-        splitLine: { lineStyle: { color: "#f1f5f9" } },
-        axisLabel: { color: "#94a3b8", fontSize: 11, formatter: "¥{value}" },
+        splitLine: { lineStyle: { color: readToken("--t-ink-3", "#8A7757"), opacity: 0.35 } },
+        axisLabel: { color: readToken("--t-ink-3", "#8A7757"), fontSize: 11, formatter: "¥{value}" },
       },
       series: [
         {
@@ -221,8 +235,8 @@ export function TrendDashboard({ products }: { products: TrendProduct[] }) {
           })),
         },
       ],
-    } satisfies echarts.EChartsOption);
-  }, [baseline]);
+    } satisfies echarts.EChartsCoreOption);
+  }, [baseline, theme]);
 
   // 竞品监控快照价格趋势（有快照才画）
   const snapshotSeries = useMemo(() => {
@@ -259,23 +273,23 @@ export function TrendDashboard({ products }: { products: TrendProduct[] }) {
         trigger: "axis",
         valueFormatter: (value: unknown) => (typeof value === "number" ? `¥${value.toFixed(2)}` : "-"),
       },
-      legend: { top: 0, textStyle: { color: "#475569", fontSize: 12 } },
+      legend: { top: 0, textStyle: { color: readToken("--t-ink-2", "#5C4A33"), fontSize: 12 } },
       grid: { left: 8, right: 16, top: 40, bottom: 8, containLabel: true },
       xAxis: {
         type: "category",
         boundaryGap: false,
         data: dates.map(formatDay),
-        axisLine: { lineStyle: { color: "#e2e8f0" } },
-        axisLabel: { color: "#94a3b8", fontSize: 11 },
+        axisLine: { lineStyle: { color: readToken("--t-line", "#E4D8C1") } },
+        axisLabel: { color: readToken("--t-ink-3", "#8A7757"), fontSize: 11 },
       },
       yAxis: {
         type: "value",
-        splitLine: { lineStyle: { color: "#f1f5f9" } },
-        axisLabel: { color: "#94a3b8", fontSize: 11, formatter: "¥{value}" },
+        splitLine: { lineStyle: { color: readToken("--t-ink-3", "#8A7757"), opacity: 0.35 } },
+        axisLabel: { color: readToken("--t-ink-3", "#8A7757"), fontSize: 11, formatter: "¥{value}" },
       },
       series: snapshotSeries,
-    } satisfies echarts.EChartsOption);
-  }, [snapshotSeries, baseline]);
+    } satisfies echarts.EChartsCoreOption);
+  }, [snapshotSeries, baseline, theme]);
 
   if (products.length === 0) {
     return (

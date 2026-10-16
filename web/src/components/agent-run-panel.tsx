@@ -126,7 +126,7 @@ export function AgentRunPanel({ productId, initialRuns, canEdit }: AgentRunPanel
         <div className="rounded-lg border border-hairline bg-surface p-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div>
-              <div className="flex items-center gap-2 text-emerald-700">
+              <div className="flex items-center gap-2 text-success">
                 <Bot className="h-5 w-5" aria-hidden="true" />
                 <span className="text-sm font-semibold">商品运营 Agent</span>
               </div>
@@ -191,12 +191,12 @@ export function AgentRunPanel({ productId, initialRuns, canEdit }: AgentRunPanel
 
             <QualityPanel run={latestRun} />
             {latestRun.status === "awaiting_review" ? (
-              <div className="rounded-lg border border-amber-200 bg-amber-50 p-6">
-                <div className="flex items-center gap-2 text-amber-800">
+              <div className="rounded-lg border border-hairline bg-warning-soft p-6">
+                <div className="flex items-center gap-2 text-warning">
                   <UserCheck className="h-5 w-5" />
                   <h3 className="text-lg font-semibold">等待人工审核</h3>
                 </div>
-                <p className="mt-2 text-sm leading-6 text-amber-800/80">
+                <p className="mt-2 text-sm leading-6 text-warning/80">
                   可直接通过、编辑完整结构化草稿后通过，或驳回。本步骤不会自动执行投放或资金操作。
                 </p>
                 <Field label="结构化草稿（可编辑）" htmlFor="agent-draft-json" className="mt-5">
@@ -236,7 +236,7 @@ export function AgentRunPanel({ productId, initialRuns, canEdit }: AgentRunPanel
             ) : null}
           </>
         ) : (
-          <div className="rounded-lg border border-dashed border-slate-300 bg-surface">
+          <div className="rounded-lg border border-dashed border-hairline bg-surface">
             <EmptyState
               icon={<Bot className="h-5 w-5" />}
               title="还没有 Agent 运行记录"
@@ -305,10 +305,10 @@ function QualityPanel({ run }: { run: AgentRun }) {
     <div className="rounded-lg border border-hairline bg-surface p-6">
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2">
-          <ShieldCheck className="h-5 w-5 text-emerald-700" />
+          <ShieldCheck className="h-5 w-5 text-success" />
           <h3 className="text-lg font-semibold">质量审核</h3>
         </div>
-        <span className={`text-lg font-semibold ${report.passed ? "text-emerald-700" : "text-amber-700"}`}>
+        <span className={`text-lg font-semibold ${report.passed ? "text-success" : "text-warning"}`}>
           {report.score} 分
         </span>
       </div>
@@ -317,15 +317,15 @@ function QualityPanel({ run }: { run: AgentRun }) {
           report.issues?.map((issue) => (
             <div key={`${issue.code}-${issue.field}`} className="flex items-start gap-2 rounded-md bg-surface-muted px-3 py-2 text-sm">
               {issue.severity === "error" ? (
-                <XCircle className="mt-0.5 h-4 w-4 shrink-0 text-rose-600" />
+                <XCircle className="mt-0.5 h-4 w-4 shrink-0 text-danger" />
               ) : (
-                <CircleAlert className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
+                <CircleAlert className="mt-0.5 h-4 w-4 shrink-0 text-warning" />
               )}
               <span className="text-body">{issue.message}</span>
             </div>
           ))
         ) : (
-          <p className="flex items-center gap-2 text-sm text-emerald-700">
+          <p className="flex items-center gap-2 text-sm text-success">
             <CheckCircle2 className="h-4 w-4" /> 结构、差异性与合规规则检查通过
           </p>
         )}
@@ -361,10 +361,10 @@ function RunStatusBadge({ status }: { status: AgentRunStatus }) {
 
 /** 渲染 StepStateIcon 组件，集中展示stepstateicon所需的数据、状态和操作入口。 */
 function StepStateIcon({ state }: { state: "pending" | "running" | "completed" | "failed" }) {
-  if (state === "completed") return <CheckCircle2 className="h-4 w-4 text-emerald-600" />;
-  if (state === "failed") return <XCircle className="h-4 w-4 text-rose-600" />;
-  if (state === "running") return <RefreshCw className="h-4 w-4 animate-spin text-sky-600" />;
-  return <Clock3 className="h-4 w-4 text-slate-300" />;
+  if (state === "completed") return <CheckCircle2 className="h-4 w-4 text-success" />;
+  if (state === "failed") return <XCircle className="h-4 w-4 text-danger" />;
+  if (state === "running") return <RefreshCw className="h-4 w-4 animate-spin text-info" />;
+  return <Clock3 className="h-4 w-4 text-muted" />;
 }
 
 /** specialiststate，封装当前页面重复使用的转换或展示规则，并统一处理空值边界。 */

@@ -2,6 +2,15 @@ import { cookies } from "next/headers";
 
 export const AUTH_COOKIE_NAME = "eo_auth_token";
 export const WORKSPACE_COOKIE_NAME = "eo_workspace_id";
+export const DEMO_MODE_COOKIE_NAME = "eo_demo_mode";
+
+/** 判断当前是否处于演示模式：无 cookie（首次访问）或值为 "1" 即为演示模式。 */
+export async function isDemoMode(): Promise<boolean> {
+  const cookieStore = await cookies();
+  const value = cookieStore.get(DEMO_MODE_COOKIE_NAME)?.value;
+  // 无 cookie（首次访问）或值为 "1" → 演示模式
+  return value === undefined || value === "1";
+}
 
 /** 获取认证token，集中维护服务端会话 Cookie 与转发后端所需的认证请求头。 */
 export async function getAuthToken(): Promise<string | null> {

@@ -14,7 +14,7 @@ type StatCardProps = {
 };
 
 const valueToneClass: Record<StatTone, string> = {
-  default: "text-slate-950",
+  default: "text-strong",
   brand: "text-brand",
   success: "text-success",
   warning: "text-warning",
@@ -34,19 +34,19 @@ export function StatCard({
   return (
     <div
       className={[
-        "rounded-lg border border-slate-200 bg-white p-4 shadow-card",
+        "rounded-lg border border-hairline bg-surface p-4 shadow-card",
         className ?? "",
       ]
         .filter(Boolean)
         .join(" ")}
     >
-      <p className="text-xs text-slate-500">{label}</p>
+      <p className="text-xs text-muted">{label}</p>
 
       <div className="mt-2 flex items-baseline gap-1.5">
         <span className={`text-2xl font-semibold leading-none ${valueToneClass[tone]}`}>
           {value}
         </span>
-        {unit ? <span className="text-xs text-slate-500">{unit}</span> : null}
+        {unit ? <span className="text-xs text-muted">{unit}</span> : null}
       </div>
 
       {trend || hint ? (
@@ -57,8 +57,8 @@ export function StatCard({
                 "inline-flex items-center gap-0.5 rounded px-1.5 py-0.5 text-xs font-medium",
                 // 中国市场惯例：涨为红、跌为绿。
                 trend.direction === "up"
-                  ? "bg-rose-50 text-rose-700"
-                  : "bg-emerald-50 text-emerald-700",
+                  ? "bg-danger-soft text-danger"
+                  : "bg-success-soft text-success",
               ].join(" ")}
             >
               {trend.direction === "up" ? (
@@ -69,7 +69,7 @@ export function StatCard({
               {trend.value}
             </span>
           ) : null}
-          {hint ? <span className="truncate text-xs text-slate-400">{hint}</span> : null}
+          {hint ? <span className="truncate text-xs text-muted">{hint}</span> : null}
         </div>
       ) : null}
     </div>

@@ -127,7 +127,7 @@ export function PlatformMappingPanel({
       ) : null}
 
       <TableShell className="mt-5">
-        <div className="hidden border-b border-hairline bg-surface-muted px-4 py-2.5 text-xs font-semibold text-slate-500 lg:grid lg:grid-cols-[0.7fr_1fr_1fr_0.8fr_0.8fr]">
+        <div className="hidden border-b border-hairline bg-surface-muted px-4 py-2.5 text-xs font-semibold text-muted lg:grid lg:grid-cols-[0.7fr_1fr_1fr_0.8fr_0.8fr]">
           <span>平台</span>
           <span>平台商品 ID</span>
           <span>平台 SKU ID</span>
@@ -137,7 +137,7 @@ export function PlatformMappingPanel({
         {mappings.length === 0 ? (
           <EmptyState compact title="还没有平台映射。" />
         ) : (
-          <div className="divide-y divide-slate-200">
+          <div className="divide-y divide-hairline">
             {mappings.map((mapping) => (
               <div
                 key={mapping.id}
@@ -152,7 +152,7 @@ export function PlatformMappingPanel({
                     href={mapping.listing_url}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex items-center gap-1 text-xs font-medium text-sky-700 hover:text-sky-900"
+                    className="inline-flex items-center gap-1 text-xs font-medium text-info hover:text-brand"
                   >
                     <LinkIcon className="h-3 w-3" aria-hidden="true" />
                     打开

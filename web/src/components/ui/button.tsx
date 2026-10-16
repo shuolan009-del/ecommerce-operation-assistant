@@ -10,12 +10,13 @@ export type ButtonSize = "sm" | "md";
 const baseClass =
   "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md font-medium transition-colors disabled:pointer-events-none disabled:opacity-50";
 
+// 全部使用语义类（随主题换肤）。注：primary 与 brand 按映射表同色，保留两个 variant 仅为 API 兼容。
 const variantClass: Record<ButtonVariant, string> = {
-  primary: "bg-slate-950 text-white hover:bg-slate-800",
-  brand: "bg-cyan-700 text-white hover:bg-cyan-800",
-  default: "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50",
-  text: "text-slate-600 hover:text-slate-900",
-  danger: "border border-rose-200 bg-white text-rose-700 hover:bg-rose-50",
+  primary: "bg-brand text-white hover:bg-brand-strong",
+  brand: "bg-brand text-white hover:bg-brand-strong",
+  default: "border border-hairline bg-surface text-body hover:bg-surface-subtle",
+  text: "text-body hover:text-strong",
+  danger: "border border-hairline bg-surface text-danger hover:bg-danger-soft",
 };
 
 const sizeClass: Record<ButtonSize, string> = {

@@ -26,7 +26,6 @@ ENV NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:8000
 WORKDIR /app
 
 COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/public ./public
 COPY --from=builder /app/package*.json ./
 COPY --from=prod-deps /app/node_modules ./node_modules
 

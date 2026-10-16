@@ -100,12 +100,12 @@ export default async function StorePage({ params, searchParams }: StorePageProps
         <section className="rounded-lg border border-warning/30 bg-warning-soft p-5">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
             <div className="flex gap-3">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-amber-100 text-warning">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-warning-soft text-warning">
                 <AlertTriangle className="h-5 w-5" aria-hidden="true" />
               </div>
               <div>
                 <h2 className="text-base font-semibold text-strong">库存异常提示</h2>
-                <p className="mt-1 text-sm text-amber-900">
+                <p className="mt-1 text-sm text-warning">
                   {lowStockRows.length} 个 SKU 可用库存已低于或等于预警线，建议优先补货或调整投放节奏。
                 </p>
               </div>
@@ -122,7 +122,7 @@ export default async function StorePage({ params, searchParams }: StorePageProps
               <Link
                 key={row.sku_id}
                 href={`/products/${row.product_id}?tab=overview`}
-                className="rounded-md border border-warning/30 bg-surface px-3 py-2 text-sm hover:bg-amber-50"
+                className="rounded-md border border-warning/30 bg-surface px-3 py-2 text-sm hover:bg-warning-soft"
               >
                 <span className="font-medium text-strong">{row.product_name}</span>
                 <span className="ml-2 text-body">{row.sku_code}</span>
@@ -473,7 +473,7 @@ function StoreProductRow({ product }: { product: Product }) {
       <Badge tone={platformStatusTone(product.platform_status)} className="w-fit">
         {product.platform_status ?? "未同步"}
       </Badge>
-      <span className="font-medium text-slate-800">{product.price ? `¥${product.price}` : "-"}</span>
+      <span className="font-medium text-body">{product.price ? `¥${product.price}` : "-"}</span>
       <div className="flex flex-wrap gap-1.5">
         {product.selling_points.slice(0, 3).map((point) => (
           <Badge key={point} tone="success">
@@ -501,9 +501,9 @@ function InventoryRow({ row }: { row: StoreInventoryRow }) {
         <p className="mt-1 text-xs text-body">{row.sku_code}</p>
       </div>
       <span className="text-body">{row.product_name}</span>
-      <span className="font-medium text-slate-800">{row.quantity}</span>
+      <span className="font-medium text-body">{row.quantity}</span>
       <span className="text-body">{row.locked_quantity}</span>
-      <span className="font-medium text-slate-800">{row.available_quantity}</span>
+      <span className="font-medium text-body">{row.available_quantity}</span>
       <Badge tone={row.is_low_stock ? "warning" : "success"} className="w-fit">
         {row.is_low_stock ? `低库存 <= ${row.warning_threshold}` : "正常"}
       </Badge>
@@ -515,12 +515,12 @@ function InventoryRow({ row }: { row: StoreInventoryRow }) {
 function InventoryMovementRow({ movement }: { movement: StoreInventoryMovementRow }) {
   return (
     <TableRow columns={MOVEMENT_COLUMNS}>
-      <span className="font-medium text-slate-900">{movementTypeLabel(movement.movement_type)}</span>
-      <Link href={`/products/${movement.product_id}?tab=overview`} className="text-info hover:text-sky-900">
+      <span className="font-medium text-strong">{movementTypeLabel(movement.movement_type)}</span>
+      <Link href={`/products/${movement.product_id}?tab=overview`} className="text-info hover:text-brand">
         {movement.product_name}
       </Link>
       <span className="text-body">{movement.sku_code}</span>
-      <span className="font-medium text-slate-800">{formatSigned(movement.quantity_delta)}</span>
+      <span className="font-medium text-body">{formatSigned(movement.quantity_delta)}</span>
       <span className="text-body">{formatSigned(movement.locked_delta)}</span>
       <span className="truncate text-body">{movement.reason ?? movement.created_at}</span>
     </TableRow>

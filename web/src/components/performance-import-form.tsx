@@ -30,7 +30,7 @@ export function PerformanceImportForm({ canEdit = true, productId }: Performance
     >
       {/* CSV 上传走服务端 action，由 route 解析表格并转发给后端 bulk API，避免在客户端持有鉴权细节。 */}
       <div className="flex items-center gap-3">
-        <div className="flex h-9 w-9 items-center justify-center rounded-md bg-sky-600 text-white">
+        <div className="flex h-9 w-9 items-center justify-center rounded-md bg-info text-white">
           <Upload className="h-4 w-4" aria-hidden="true" />
         </div>
         <div>

@@ -1,68 +1,70 @@
 @import "tailwindcss";
+@import "../styles/jiahe-brand-tokens.css";
+/* 顺序约定：品牌令牌在前，双主题令牌在后（后者的 --t-* 只作桥接来源，不覆盖品牌同名变量） */
+@import "../styles/theme-tokens.css";
 
+/* ============================================================================
+   AI电商运营助手 · 全局样式（嘉禾品牌版）
+   品牌令牌来自 jiahe-brand-tokens@1.0.0（src/styles/ 下副本，由 sync-brand-tokens.py 同步）。
+   Tailwind v4 工具类经下方 @theme（非 inline）映射到品牌变量与双主题变量；
+   语义注意：本项目的 --accent 是「主操作色」（旧值为 slate-950 深按钮），
+   已对齐为嘉禾绿；--brand-accent（侧栏选中竖条）对齐禾金棕。
+   ============================================================================ */
 :root {
   color-scheme: light;
 
-  --background: #f7f8fb;
-  --foreground: #0f172a;
-  --app-font-sans: "Inter", "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, Helvetica, sans-serif;
-  --app-font-mono: "Cascadia Code", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  /* ---- 页面与表面（对齐品牌微绿灰底） ---- */
+  --foreground: var(--text-primary);
+  --app-font-sans: var(--font);
+  --app-font-mono: var(--font-mono);
+  --bg-page: var(--surface-raised);
 
-  /* ---- 页面与表面 ---- */
-  --bg-page: #f7f8fb; /* 页面底：沿用现有值 */
-  --surface: #ffffff; /* 白卡表面 */
-  --surface-muted: #f8fafc; /* slate-50 分区 / 表头底 */
-  --surface-subtle: #f1f5f9; /* slate-100 行 hover 底 / 中性胶囊底 */
+  /* ── 主题桥接：旧语义别名指向主题变量，让现有 84 处 bg-surface / 33 处 text-muted 零改动跟随主题 ── */
+  --background: var(--t-bg-base);
+  --surface: var(--t-surface);
+  --surface-muted: var(--t-surface-muted);
+  --surface-subtle: var(--t-surface-hover);
+  --surface-field: var(--t-surface-field);
+  --surface-raised: var(--t-surface);
+  --border: var(--t-line);
+  --border-light: var(--t-line-hair);
+  --border-strong: var(--t-line-strong);
+  --text-primary: var(--t-ink-1);
+  --text-secondary: var(--t-ink-2);
+  --text-muted: var(--t-ink-3);
+  --card-shadow: var(--t-card-shadow);
+  --sidebar: var(--t-sidebar-bg);
+  --sidebar-active: var(--t-sidebar-active-bg);
+  --sidebar-fg: var(--t-sidebar-fg);
+  --sidebar-fg-active: var(--t-sidebar-active-fg);
 
-  /* ---- 描边两级 ---- */
-  --border: #e2e8f0; /* slate-200 常规描边 */
-  --border-subtle: #f1f5f9; /* slate-100 弱化描边 */
+  /* ---- 描边两级（--border / --border-light 由主题桥接统一接管） ---- */
+  --border-subtle: var(--border-light);
 
-  /* ---- 文字三级 ---- */
-  --text-strong: #020617; /* slate-950 标题 / 主数值 */
-  --text-default: #475569; /* slate-600 正文 */
-  --text-muted: #94a3b8; /* slate-400 弱提示 */
+  /* ---- 文字三级（--text-muted 由主题桥接统一接管） ---- */
+  --text-strong: var(--text-primary);
+  --text-default: var(--text-secondary);
 
-  /* ---- 品牌色（cyan 系，沿用 Agent 入口色） ---- */
-  --brand: #0e7490; /* cyan-700 主品牌 */
-  --brand-strong: #155e75; /* cyan-800 品牌 hover */
-  --brand-soft: #ecfeff; /* cyan-50 品牌浅底 */
-  --brand-accent: #06b6d4; /* cyan-500 侧栏选中竖条 */
+  /* ---- 品牌色（嘉禾绿，两主题不换肤） ---- */
+  --brand: var(--primary);
+  --brand-strong: var(--primary-hover);
+  --brand-soft: var(--primary-soft);
+  --brand-accent: var(--accent); /* 侧栏选中竖条：禾金棕 */
 
-  /* ---- 主操作色（slate 系深色按钮） ---- */
-  --accent: #020617; /* slate-950 */
-  --accent-strong: #1e293b; /* slate-800 hover */
+  /* ---- 主操作色（嘉禾绿） ---- */
+  --accent: var(--primary);
+  --accent-strong: var(--primary-hover);
 
-  /* ---- 语义四色 + soft 底 ---- */
-  --success: #047857; /* emerald-700 */
-  --success-soft: #ecfdf5; /* emerald-50 */
-  --warning: #b45309; /* amber-700 */
-  --warning-soft: #fffbeb; /* amber-50 */
-  --danger: #be123c; /* rose-700 */
-  --danger-soft: #fff1f2; /* rose-50 */
-  --info: #0369a1; /* sky-700 */
-  --info-soft: #f0f9ff; /* sky-50 */
-
-  /* ---- 侧栏深色 ---- */
-  --sidebar: #0f172a; /* slate-900 侧栏底 */
-  --sidebar-active: #1e293b; /* slate-800 选中项底 */
-  --sidebar-fg: #94a3b8; /* slate-400 未选中文字 */
-  --sidebar-fg-active: #ffffff; /* 选中文字 */
-
-  /* ---- 圆角三档（普通变量，可 rounded-[var(--radius-md)] 使用） ---- */
-  --radius-sm: 6px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-
-  /* ---- 阴影 ---- */
-  --card-shadow: 0 1px 2px 0 rgb(15 23 42 / 0.04);
-
-  /* ---- 布局 ---- */
+  /* ---- 阴影 / 布局（--card-shadow 由主题桥接统一接管） ---- */
   --sidebar-width: 208px;
   --topbar-height: 52px;
 }
 
-@theme inline {
+/* ⚠️ 必须用 @theme（非 inline）：本项目变量是链式引用
+   （--color-sidebar → --sidebar → --primary-deep → 品牌令牌包），
+   @theme inline 只支持字面值静态求值，链式 var() 会让 bg 与 text 系列工具类被静默丢弃。
+   非 inline 模式下变量输出到 :root、工具类以 var() 引用，链在浏览器端解析。 */
+@theme {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--app-font-sans);
@@ -73,6 +75,10 @@
   --color-surface: var(--surface);
   --color-surface-muted: var(--surface-muted);
   --color-surface-subtle: var(--surface-subtle);
+  /* 纯白面：按钮/输入框等需要比卡面更亮一档的控件（agri=#FFFDF8 卡面 vs #FFFFFF 控件；neu 两值同色靠阴影分层） */
+  --color-surface-2: var(--t-surface-2);
+  /* 输入框/搜索框面（P1b：app-shell 搜索框使用 bg-surface-field） */
+  --color-surface-field: var(--surface-field);
 
   /* 描边 */
   --color-hairline: var(--border);
@@ -93,7 +99,7 @@
   --color-accent: var(--accent);
   --color-accent-strong: var(--accent-strong);
 
-  /* 语义 */
+  /* 语义（品牌包提供同名变量） */
   --color-success: var(--success);
   --color-success-soft: var(--success-soft);
   --color-warning: var(--warning);
@@ -115,10 +121,43 @@
   /* 布局 */
   --spacing-sidebar: var(--sidebar-width);
   --spacing-topbar: var(--topbar-height);
+
+  /* ── 新增主题映射（双主题切换，agri / neu）── */
+  --color-t-bg-base: var(--t-bg-base);
+  --color-t-surface: var(--t-surface);
+  --color-t-surface-2: var(--t-surface-2);
+  --color-t-surface-muted: var(--t-surface-muted);
+  --color-t-surface-hover: var(--t-surface-hover);
+  --color-t-surface-field: var(--t-surface-field);
+  --color-t-ink-1: var(--t-ink-1);
+  --color-t-ink-2: var(--t-ink-2);
+  --color-t-ink-3: var(--t-ink-3);
+  --color-t-line: var(--t-line);
+  --color-t-line-strong: var(--t-line-strong);
+  --color-t-line-hair: var(--t-line-hair);
+  --color-t-line-focus: var(--t-line-focus);
+  --color-t-card-bg: var(--t-card-bg);
+  /* 注意：--t-card-border / --t-card-shadow / --t-control-border / --t-table-row-bg
+     装的是非颜色值（1px solid var(...) / 阴影串 / transparent），不能映射成 --color-*，
+     否则会生成非法 CSS 被静默丢弃；需要这些值请直接引用原始变量。 */
+  --color-t-control-shadow: var(--t-control-shadow);
+  --color-t-table-head-bg: var(--t-table-head-bg);
+  --color-t-sidebar-bg: var(--t-sidebar-bg);
+  --color-t-sidebar-fg: var(--t-sidebar-fg);
+  --color-t-sidebar-fg-dim: var(--t-sidebar-fg-dim);
+  --color-t-sidebar-active-bg: var(--t-sidebar-active-bg);
+  --color-t-sidebar-active-fg: var(--t-sidebar-active-fg);
+  --color-t-sidebar-active-accent: var(--t-sidebar-active-accent);
+  --shadow-t-card: var(--t-card-shadow);
+  --shadow-t-control: var(--t-control-shadow);
 }
 
 body {
-  background: var(--background);
+  /* 背景跟随主题：agri 为米黄纸 + 5 层纸纹，neu 取消纹理只留柔雾底 */
+  background-color: var(--t-bg-base);
+  background-image: var(--t-tex-body);
+  background-size: var(--t-tex-body-size);
+  background-attachment: var(--t-tex-body-attachment);
   color: var(--foreground);
   font-family: var(--app-font-sans);
 }

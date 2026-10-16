@@ -1,7 +1,14 @@
+"use client";
+
 import { Plus, Sparkles } from "lucide-react";
+import { useEffect, useState } from "react";
 
 import { Button, Field, Input, Select, Textarea } from "@/components/ui";
 import type { Store } from "@/types";
+
+/** 演示模式 Cookie 名，与 `@/lib/session` 的 DEMO_MODE_COOKIE_NAME 保持一致。
+ *  该模块依赖 next/headers（仅服务端可用），客户端组件不能直接导入，故此处写字面量。 */
+const DEMO_MODE_COOKIE = "eo_demo_mode";
 
 const platforms = [
   { label: "抖音电商", value: "douyin" },
@@ -20,6 +27,13 @@ type ProductCreateFormProps = {
 
 /** 渲染 ProductCreateForm 组件，集中展示商品创建表单所需的数据、状态和操作入口。 */
 export function ProductCreateForm({ stores = [] }: ProductCreateFormProps) {
+  // 演示模式下禁用创建；在 effect 中读取 Cookie，避免 SSR 访问 document 报错与 hydration 不一致。
+  const [isDemo, setIsDemo] = useState(false);
+
+  useEffect(() => {
+    setIsDemo(document.cookie.includes(`${DEMO_MODE_COOKIE}=1`));
+  }, []);
+
   return (
     <form action="/products/create" method="post" className="space-y-5">
       <div className="flex items-center gap-3">
@@ -77,7 +91,12 @@ export function ProductCreateForm({ stores = [] }: ProductCreateFormProps) {
         <Textarea name="selling_points" placeholder="用逗号或换行分隔，例如：低糖、饱腹、独立包装" />
       </Field>
 
-      <Button type="submit" className="w-full">
+      <Button
+        type="submit"
+        className="w-full"
+        disabled={isDemo}
+        title={isDemo ? "演示模式下不可创建" : undefined}
+      >
         <Plus className="h-4 w-4" aria-hidden="true" />
         创建商品
       </Button>

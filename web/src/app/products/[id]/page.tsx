@@ -284,7 +284,7 @@ export default async function ProductDetailPage({ params, searchParams }: Produc
                         href={competitor.url}
                         target="_blank"
                         rel="noreferrer"
-                        className="mt-1 inline-flex items-center gap-1 text-xs text-info hover:text-sky-900"
+                        className="mt-1 inline-flex items-center gap-1 text-xs text-info hover:text-brand"
                       >
                         <LinkIcon className="h-3 w-3" aria-hidden="true" />
                         查看链接
@@ -371,7 +371,7 @@ export default async function ProductDetailPage({ params, searchParams }: Produc
 
         <div className="grid gap-4">
         <Card>
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-100 text-emerald-700">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-success-soft text-success">
             <ImageIcon className="h-4 w-4" aria-hidden="true" />
           </div>
           <h3 className="mt-4 text-sm font-semibold text-strong">主图方案</h3>
@@ -388,7 +388,7 @@ export default async function ProductDetailPage({ params, searchParams }: Produc
           ) : null}
         </Card>
         <Card>
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-violet-100 text-violet-700">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-soft text-brand">
             <Video className="h-4 w-4" aria-hidden="true" />
           </div>
           <h3 className="mt-4 text-sm font-semibold text-strong">短视频脚本</h3>
@@ -877,7 +877,7 @@ export default async function ProductDetailPage({ params, searchParams }: Produc
                         href={absoluteMediaUrl(jobResultUrl(job) || "")}
                         target="_blank"
                         rel="noreferrer"
-                        className="text-info hover:text-sky-900"
+                        className="text-info hover:text-brand"
                       >
                         打开生成结果
                       </a>
@@ -944,7 +944,7 @@ export default async function ProductDetailPage({ params, searchParams }: Produc
                   <TableRow key={task.id} columns="80px 110px 1fr 1.2fr">
                     <span className="font-medium text-body">#{task.id}</span>
                     <LinkParseTaskStatusBadge status={task.status} />
-                    <a href={task.url} target="_blank" rel="noreferrer" className="truncate text-info hover:text-sky-900">
+                    <a href={task.url} target="_blank" rel="noreferrer" className="truncate text-info hover:text-brand">
                       {task.url}
                     </a>
                     {task.error ? (
@@ -1000,15 +1000,15 @@ export default async function ProductDetailPage({ params, searchParams }: Produc
                     </p>
                   </div>
                   <div className="grid gap-2">
-                    <Badge tone="warning" className="w-fit bg-violet-50 text-violet-700">
+                    <Badge tone="warning" className="w-fit bg-brand-soft text-brand">
                       {planValue(script.content, "duration_seconds")}s
                     </Badge>
                     <CreativePlanStatusActions productId={product.id} plan={script} tab="video" canEdit={canEdit} />
                   </div>
                 </div>
 
-                <div className="mt-4 rounded-md bg-violet-50 px-3 py-2">
-                  <p className="text-xs font-medium text-violet-700">开头钩子</p>
+                <div className="mt-4 rounded-md bg-brand-soft px-3 py-2">
+                  <p className="text-xs font-medium text-brand">开头钩子</p>
                   <p className="mt-1 text-sm leading-6 text-strong">
                     {planText(script.content, "hook")}
                   </p>
@@ -1284,7 +1284,7 @@ function ProductWorkflowPanel({
               {step.done ? (
                 <CheckCircle2 className="h-4 w-4 text-success" aria-hidden="true" />
               ) : (
-                <span className="h-2 w-2 rounded-full bg-amber-500" aria-hidden="true" />
+                <span className="h-2 w-2 rounded-full bg-warning" aria-hidden="true" />
               )}
             </div>
             <p className="mt-2 text-xs leading-5 text-body">{step.hint}</p>
@@ -1376,7 +1376,7 @@ function DiagnosisList({
           <p
             key={item}
             className={`rounded-md px-3 py-2 text-sm leading-6 ${
-              accent ? "bg-success-soft text-emerald-800" : "bg-surface-muted text-body"
+              accent ? "bg-success-soft text-success" : "bg-surface-muted text-body"
             }`}
           >
             {item}
@@ -1405,7 +1405,7 @@ function ReviewList({
           <p
             key={item}
             className={`rounded-md px-3 py-2 text-sm leading-6 ${
-              accent ? "bg-warning-soft text-amber-800" : "bg-surface-muted text-body"
+              accent ? "bg-warning-soft text-warning" : "bg-surface-muted text-body"
             }`}
           >
             {item}
@@ -1434,7 +1434,7 @@ function AdTextList({
           <p
             key={item}
             className={`rounded-md px-3 py-2 text-sm leading-6 ${
-              accent ? "bg-success-soft text-emerald-800" : "bg-surface-muted text-body"
+              accent ? "bg-success-soft text-success" : "bg-surface-muted text-body"
             }`}
           >
             {item}
@@ -1488,7 +1488,7 @@ function BudgetPlan({ content }: { content: Record<string, unknown> }) {
     <div className="rounded-lg border border-hairline bg-surface p-4">
       <p className="text-sm font-semibold text-strong">预算计划</p>
       <div className="mt-3 space-y-2">
-        <p className="rounded-md bg-success-soft px-3 py-2 text-sm leading-6 text-emerald-800">
+        <p className="rounded-md bg-success-soft px-3 py-2 text-sm leading-6 text-success">
           {contentObjectText(budget, "daily_budget") || "先用小预算测试。"}
         </p>
         {contentObjectList(budget, "allocation").map((item) => (
@@ -1496,7 +1496,7 @@ function BudgetPlan({ content }: { content: Record<string, unknown> }) {
             {item}
           </p>
         ))}
-        <p className="rounded-md bg-danger-soft px-3 py-2 text-sm leading-6 text-rose-800">
+        <p className="rounded-md bg-danger-soft px-3 py-2 text-sm leading-6 text-danger">
           {contentObjectText(budget, "stop_loss_rule") || "到达止损线及时暂停。"}
         </p>
       </div>
@@ -1807,7 +1807,7 @@ function AdWorkflowPanel({ product }: { product: ProductDetail }) {
               {step.done ? (
                 <CheckCircle2 className="h-4 w-4 text-success" aria-hidden="true" />
               ) : (
-                <span className="h-2 w-2 rounded-full bg-amber-500" aria-hidden="true" />
+                <span className="h-2 w-2 rounded-full bg-warning" aria-hidden="true" />
               )}
             </div>
             <p className="mt-2 text-xs leading-5 text-body">{step.hint}</p>
@@ -2517,7 +2517,7 @@ function TrendBar({
       <span className="text-muted">{label}</span>
       <div className="h-2 overflow-hidden rounded-full bg-surface">
         <div
-          className={`h-full rounded-full ${accent ? "bg-emerald-500" : "bg-sky-500"}`}
+          className={`h-full rounded-full ${accent ? "bg-success" : "bg-info"}`}
           style={{ width: `${Math.max(4, Math.min(percent, 100))}%` }}
         />
       </div>

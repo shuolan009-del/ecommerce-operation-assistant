@@ -55,9 +55,9 @@ export function InventoryAdvicePanel({ storeId, canEdit = true }: { storeId: num
 
       {advice ? (
         <div className="mt-4 grid gap-4">
-          <div className="rounded-md border border-cyan-100 bg-brand-soft p-4">
+          <div className="rounded-md border border-hairline bg-brand-soft p-4">
             <p className="text-xs font-medium text-brand">{advice.source === "llm" ? "AI 生成" : "规则建议"}</p>
-            <p className="mt-2 text-sm leading-6 text-slate-800">{advice.summary}</p>
+            <p className="mt-2 text-sm leading-6 text-body">{advice.summary}</p>
           </div>
           <AdviceList title="风险判断" items={advice.risks} />
           <AdviceList title="补货动作" items={advice.replenishment_actions} />
@@ -76,7 +76,7 @@ function AdviceList({ title, items }: { title: string; items: string[] }) {
       <h3 className="text-sm font-semibold text-strong">{title}</h3>
       <ul className="mt-3 grid gap-2">
         {items.map((item) => (
-          <li key={item} className="text-sm leading-6 text-slate-700">
+          <li key={item} className="text-sm leading-6 text-body">
             {item}
           </li>
         ))}

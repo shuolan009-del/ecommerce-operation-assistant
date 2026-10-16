@@ -10,7 +10,7 @@ import {
 } from "@/components/trend-dashboard";
 
 export const metadata = {
-  title: "商品趋势 · 电商运营助手",
+  title: "商品趋势 · AI电商运营助手",
 };
 
 /** 把商品详情压平成看板需要的最小数据集，避免把生成任务等大对象传给客户端。 */

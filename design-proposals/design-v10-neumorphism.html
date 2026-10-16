@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>禾语农产品智能商管平台 · 工作台（新拟态）</title>
+<!--
+  方案 J：新拟态 Neumorphism（design-v10-neumorphism）
+  · 纯静态单文件，内联样式，零外部依赖，双击即可打开
+  · 同色系凸起 / 凹陷双阴影，软塑料质感，无边框圆润造型
+  · 图表全部用 CSS 绘制（flex / gradient / conic-gradient），不用 canvas 库
+  · 配色与圆角严格取自 jiahe-brand-tokens@1.0.0 品牌令牌
+-->
+<style>
+/* ===== 1. 品牌令牌 + 新拟态表面变量（改这里即可换肤 / 调软硬） ===== */
+:root{
+  /* 主色：嘉禾绿 */
+  --primary:#2E7D32; --primary-hover:#1B5E20; --primary-soft:#E3F2E5;
+  /* 辅色：禾金棕 */
+  --accent:#B8823C; --accent-hover:#96692C; --accent-soft:#F7EEDC;
+  /* 语义色 */
+  --success:#2E7D32; --warning:#B45309; --danger:#B42318; --info:#1D4ED8;
+  /* 中性阶 */
+  --ink-300:#CBD5E1; --ink-400:#94A3B8; --ink-500:#64748B; --ink-600:#475569;
+  --ink-700:#334155; --ink-800:#1E293B; --ink-900:#0F172A;
+  /* 圆角阶梯 */
+  --r-xs:4px; --r-sm:8px; --r-md:10px; --r-lg:16px; --r-xl:22px; --r-full:9999px;
+  /* 新拟态底座：与页面同色系的软塑料表面 */
+  --nm-bg:#E7EDE8; --nm-light:#FFFFFF; --nm-dark:#C3CFC5;
+  /* 凸起 / 凹陷双阴影（两档强度） */
+  --out:9px 9px 20px var(--nm-dark),-9px -9px 20px var(--nm-light);
+  --out-sm:5px 5px 12px var(--nm-dark),-5px -5px 12px var(--nm-light);
+  --out-xs:3px 3px 7px var(--nm-dark),-3px -3px 7px var(--nm-light);
+  --in:inset 6px 6px 13px var(--nm-dark),inset -6px -6px 13px var(--nm-light);
+  --in-sm:inset 3px 3px 7px var(--nm-dark),inset -3px -3px 7px var(--nm-light);
+  --font:-apple-system,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  --sidebar-w:230px;
+}
+
+/* ===== 2. 基础重置 ===== */
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);font-size:14px;line-height:1.55;color:var(--ink-800);background:var(--nm-bg);
+  background-image:linear-gradient(145deg,#EFF4F0 0%,var(--nm-bg) 45%,#E2E9E3 100%);background-attachment:fixed;
+  -webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none} button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+::-webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar-thumb{background:var(--nm-dark);border-radius:var(--r-full);border:2px solid var(--nm-bg)}
+::-webkit-scrollbar-track{background:transparent}
+
+/* ===== 3. 骨架：浮起的软面板 ===== */
+.shell{display:flex;min-height:100vh;gap:18px;padding:18px}
+.sidebar{width:var(--sidebar-w);flex:0 0 var(--sidebar-w);border-radius:var(--r-xl);background:var(--nm-bg);
+  box-shadow:var(--out);padding:18px 14px;display:flex;flex-direction:column;gap:6px;
+  position:sticky;top:18px;height:calc(100vh - 36px);overflow-y:auto}
+.brand{display:flex;align-items:center;gap:11px;padding:4px 6px 16px}
+.brand-logo{width:38px;height:38px;flex:0 0 38px;border-radius:var(--r-md);display:grid;place-items:center;
+  background:linear-gradient(145deg,#F2F7F2,#DCE4DD);box-shadow:var(--out-sm)}
+.brand-name{font-size:13.5px;font-weight:700;color:var(--ink-900)}
+.brand-sub{font-size:11px;color:var(--ink-500)}
+.nav-label{font-size:10.5px;font-weight:700;letter-spacing:.09em;color:var(--ink-400);padding:14px 10px 6px;text-transform:uppercase}
+.nav-item{display:flex;align-items:center;gap:11px;padding:10px 13px;margin-bottom:4px;border-radius:var(--r-md);
+  font-size:13px;color:var(--ink-600);font-weight:500;transition:box-shadow .22s cubic-bezier(.16,1,.3,1),color .22s}
+.nav-item:hover{box-shadow:var(--out-xs);color:var(--ink-900)}
+.nav-item.active{box-shadow:var(--in-sm);color:var(--primary-hover);font-weight:700}   /* 选中态＝被按下去的凹陷 */
+.nav-item.active .ico{color:var(--primary)}
+.nav-item .ico{color:var(--ink-400);display:flex}
+.nav-item .count{margin-left:auto;font-size:11px;font-weight:700;color:var(--primary-hover);background:var(--primary-soft);
+  border-radius:var(--r-full);padding:2px 8px}
+.store-dot{width:8px;height:8px;border-radius:50%;flex:0 0 8px;box-shadow:0 0 0 2px var(--nm-bg)}
+.store-dot.on{background:#4CAF50} .store-dot.pause{background:#E0A32E}
+.sidebar-foot{margin-top:auto;padding:14px;border-radius:var(--r-lg);box-shadow:var(--in-sm);font-size:11.5px;color:var(--ink-500)}
+.sidebar-foot strong{display:block;font-size:13px;color:var(--ink-900);margin-bottom:3px}
+.main{flex:1;min-width:0;display:flex;flex-direction:column;gap:18px}
+
+/* ===== 4. 顶栏 ===== */
+.topbar{border-radius:var(--r-xl);background:var(--nm-bg);box-shadow:var(--out);padding:13px 18px;
+  display:flex;align-items:center;gap:14px;position:sticky;top:18px;z-index:20}
+.topbar h1{font-size:15px;font-weight:700;color:var(--ink-900)}
+.topbar .crumb{font-size:11.5px;color:var(--ink-400)}
+.search{margin-left:auto;position:relative;width:290px;max-width:36vw}
+.search input{width:100%;height:40px;border:none;outline:none;border-radius:var(--r-full);background:var(--nm-bg);
+  box-shadow:var(--in-sm);padding:0 16px 0 38px;font-size:12.5px;color:var(--ink-700);font-family:inherit}
+.search input::placeholder{color:var(--ink-400)}
+.search svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--ink-400)}
+.user{display:flex;align-items:center;gap:10px}
+.avatar{width:36px;height:36px;border-radius:var(--r-full);display:grid;place-items:center;font-size:13px;font-weight:700;
+  color:#fff;background:linear-gradient(145deg,#4CAF50,var(--primary));box-shadow:var(--out-sm)}
+.user-name{font-size:12.5px;font-weight:600;color:var(--ink-700);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.content{display:flex;flex-direction:column;gap:18px;padding-bottom:18px}
+
+/* ===== 5. 卡片 / 徽章 / 按钮 ===== */
+.panel{border-radius:var(--r-xl);background:var(--nm-bg);box-shadow:var(--out);padding:20px 22px}
+.panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+.panel-head h2{font-size:14.5px;font-weight:700;color:var(--ink-900)}
+.panel-head p{font-size:11.5px;color:var(--ink-500);margin-top:3px}
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:5px 11px;
+  border-radius:var(--r-full);box-shadow:var(--in-sm);color:var(--ink-600)}
+.pill.ok{color:var(--success)} .pill.warn{color:var(--warning)} .pill.bad{color:var(--danger)}
+.pill.info{color:var(--info)} .pill.gold{color:var(--accent-hover)}
+.pill.raised{box-shadow:var(--out-xs)}
+.btn{height:34px;padding:0 16px;border-radius:var(--r-full);font-size:12.5px;font-weight:700;background:var(--nm-bg);
+  box-shadow:var(--out-xs);color:var(--ink-700);display:inline-flex;align-items:center;gap:6px;transition:box-shadow .2s,color .2s}
+.btn:hover{color:var(--ink-900);box-shadow:var(--out-sm)}
+.btn:active{box-shadow:var(--in-sm)}
+.btn.primary{color:#fff;background:linear-gradient(145deg,#4CAF50,var(--primary));box-shadow:0 6px 14px rgba(46,125,50,.32)}
+.btn.primary:hover{background:linear-gradient(145deg,#43A047,var(--primary-hover))}
+.btn.warn{color:#fff;background:linear-gradient(145deg,#D08A2A,var(--warning));box-shadow:0 6px 14px rgba(180,83,9,.3)}
+.btn.sm{height:30px;padding:0 13px;font-size:12px}
+
+/* ===== 6. KPI 卡（软凸起 + 凹陷迷你柱图） ===== */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.kpi{border-radius:var(--r-xl);background:var(--nm-bg);box-shadow:var(--out);padding:20px;
+  transition:box-shadow .28s cubic-bezier(.16,1,.3,1),transform .28s}
+.kpi:hover{box-shadow:12px 12px 26px var(--nm-dark),-12px -12px 26px var(--nm-light);transform:translateY(-2px)}
+.kpi-label{display:flex;align-items:center;gap:9px;font-size:12px;font-weight:600;color:var(--ink-500)}
+.kpi-icon{width:32px;height:32px;border-radius:var(--r-md);display:grid;place-items:center;background:var(--nm-bg);
+  box-shadow:var(--out-xs);color:var(--primary)}
+.kpi.accent .kpi-icon{color:var(--accent-hover)} .kpi.warn .kpi-icon{color:var(--warning)}
+.kpi-val{margin-top:14px;font-size:36px;font-weight:800;letter-spacing:-.03em;color:var(--ink-900);line-height:1;
+  font-variant-numeric:tabular-nums;display:flex;align-items:baseline;gap:5px}
+.kpi-val .unit{font-size:12.5px;font-weight:600;color:var(--ink-400)}
+.kpi-foot{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-top:16px}
+.kpi-delta{font-size:11.5px;font-weight:700}
+.kpi-delta.up{color:var(--success)} .kpi-delta.down{color:var(--danger)} .kpi-delta.flat{color:var(--ink-500)}
+.mini-bars{display:flex;align-items:flex-end;gap:4px;height:34px;padding:4px 6px;border-radius:var(--r-sm);box-shadow:var(--in-sm)}
+.mini-bars i{width:6px;border-radius:var(--r-full);background:linear-gradient(180deg,#7CC47F,var(--primary));box-shadow:1px 1px 2px var(--nm-dark)}
+.mini-bars.gold i{background:linear-gradient(180deg,#DCAF74,var(--accent))}
+.mini-bars.amber i{background:linear-gradient(180deg,#E7B25E,var(--warning))}
+
+/* ===== 7. 图表：凹陷轨道柱状图 + 环形进度 + 排行榜 ===== */
+.chart-row{display:grid;grid-template-columns:1.55fr 1fr;gap:18px}
+.bars{display:flex;align-items:flex-end;gap:10px;height:170px;padding:14px;border-radius:var(--r-lg);box-shadow:var(--in)}
+.bars .col{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%}
+.bars .fill{width:100%;max-width:26px;border-radius:var(--r-full);background:linear-gradient(180deg,#7CC47F,#3D8B41);
+  box-shadow:3px 3px 8px var(--nm-dark),-2px -2px 6px var(--nm-light);transition:filter .2s}
+.bars .col:hover .fill{filter:brightness(1.08)}
+.bars .col:nth-child(11) .fill{background:linear-gradient(180deg,#D9AB6C,var(--accent))}
+.bars-x{display:flex;gap:10px;margin-top:12px;padding:0 14px;font-size:10.5px;color:var(--ink-400)}
+.bars-x span{flex:1;text-align:center}
+.ring-wrap{display:flex;align-items:center;gap:20px;justify-content:center}
+.ring{position:relative;width:150px;height:150px;flex:0 0 150px;border-radius:50%;box-shadow:var(--out);display:grid;place-items:center}
+.ring-slot{width:118px;height:118px;border-radius:50%;box-shadow:var(--in-sm);display:grid;place-items:center;position:relative}
+.ring-slot::before{content:"";position:absolute;inset:8px;border-radius:50%;
+  background:conic-gradient(var(--primary) 0 46%,var(--accent) 46% 72%,#4C7DD8 72% 88%,#D6DFD8 88% 100%)}
+.ring-slot::after{content:"";position:absolute;inset:24px;border-radius:50%;background:var(--nm-bg);box-shadow:var(--in-sm)}
+.ring-center{position:relative;z-index:1;text-align:center}
+.ring-center b{display:block;font-size:21px;font-weight:800;color:var(--ink-900);letter-spacing:-.02em}
+.ring-center span{font-size:10.5px;color:var(--ink-500)}
+.ring-legend{display:flex;flex-direction:column;gap:11px;font-size:12px}
+.ring-legend div{display:flex;align-items:center;gap:9px;color:var(--ink-600)}
+.ring-legend .sw{width:11px;height:11px;border-radius:var(--r-xs);box-shadow:var(--out-xs)}
+.ring-legend b{margin-left:auto;color:var(--ink-900);font-variant-numeric:tabular-nums}
+.rank{display:flex;flex-direction:column;gap:14px}
+.rank-row{display:grid;grid-template-columns:30px 1fr auto;align-items:center;gap:12px}
+.rank-no{width:30px;height:30px;border-radius:var(--r-md);display:grid;place-items:center;font-size:12px;font-weight:800;
+  color:var(--ink-600);box-shadow:var(--out-xs)}
+.rank-row:nth-child(1) .rank-no{color:var(--accent-hover);background:var(--accent-soft)}
+.rank-row:nth-child(2) .rank-no{color:var(--primary-hover);background:var(--primary-soft)}
+.rank-name{font-size:12.5px;font-weight:600;color:var(--ink-800);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rank-track{height:9px;border-radius:var(--r-full);box-shadow:var(--in-sm);margin-top:7px;padding:1.5px}
+.rank-track i{display:block;height:100%;border-radius:var(--r-full);background:linear-gradient(90deg,#4CAF50,var(--primary));
+  box-shadow:1px 1px 3px var(--nm-dark)}
+.rank-row:nth-child(2) .rank-track i{background:linear-gradient(90deg,#66BB6A,#2E7D32)}
+.rank-val{font-size:12.5px;font-weight:800;color:var(--ink-900);font-variant-numeric:tabular-nums}
+
+/* ===== 8. 工作流引导（软圆形步骤） ===== */
+.flow{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+.step{border-radius:var(--r-lg);background:var(--nm-bg);box-shadow:var(--out-sm);padding:16px 14px;text-align:center;
+  transition:box-shadow .26s cubic-bezier(.16,1,.3,1)}
+.step:hover{box-shadow:var(--out)}
+.step .no{width:44px;height:44px;margin:0 auto 12px;border-radius:var(--r-full);display:grid;place-items:center;
+  font-size:13px;font-weight:800;color:var(--ink-500);box-shadow:var(--out-xs)}
+.step.done .no{color:var(--success);background:var(--primary-soft)}
+.step.current{box-shadow:var(--in-sm)}
+.step.current .no{color:#fff;background:linear-gradient(145deg,#D9AB6C,var(--accent));box-shadow:0 4px 12px rgba(184,130,60,.35)}
+.step h3{font-size:13px;font-weight:700;color:var(--ink-900)}
+.step p{font-size:11.5px;color:var(--ink-500);margin-top:6px;line-height:1.5}
+.step .tag{display:inline-block;margin-top:10px;font-size:10.5px;font-weight:700;color:var(--ink-400)}
+.step.current .tag{color:var(--accent-hover)} .step.done .tag{color:var(--success)}
+
+/* ===== 9. 平台筛选（软按钮组：未选凸起 / 选中凹陷） ===== */
+.filters{display:flex;flex-wrap:wrap;gap:10px}
+.filters button{height:36px;padding:0 16px;border-radius:var(--r-full);font-size:12.5px;font-weight:600;color:var(--ink-600);
+  background:var(--nm-bg);box-shadow:var(--out-xs);transition:box-shadow .22s cubic-bezier(.16,1,.3,1),color .22s}
+.filters button:hover{color:var(--ink-900);box-shadow:var(--out-sm)}
+.filters button.active{box-shadow:var(--in-sm);color:var(--primary-hover);font-weight:800}
+
+/* ===== 10. 店铺卡片网格 ===== */
+.store-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(258px,1fr));gap:16px}
+.store{border-radius:var(--r-xl);background:var(--nm-bg);box-shadow:var(--out-sm);padding:18px;
+  transition:box-shadow .26s cubic-bezier(.16,1,.3,1),transform .26s}
+.store:hover{box-shadow:var(--out);transform:translateY(-3px)}
+.store-top{display:flex;align-items:center;gap:12px}
+.store-icon{width:44px;height:44px;flex:0 0 44px;border-radius:var(--r-lg);display:grid;place-items:center;
+  box-shadow:var(--out-xs);color:var(--primary)}
+.store.gold .store-icon{color:var(--accent-hover)}
+.store h3{font-size:13px;font-weight:700;color:var(--ink-900);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.store .meta{font-size:11.5px;color:var(--ink-500);margin-top:3px}
+.store-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px;padding:12px;border-radius:var(--r-lg);box-shadow:var(--in-sm)}
+.store-stats p{font-size:11px;color:var(--ink-500)}
+.store-stats b{display:block;font-size:15px;font-weight:800;color:var(--ink-900);margin-top:3px;font-variant-numeric:tabular-nums}
+.store-actions{display:flex;gap:10px;margin-top:14px}
+.store.todo{box-shadow:var(--out-sm),0 0 0 1.5px rgba(180,83,9,.18)}
+
+/* ===== 11. 商品池表格（无边框，靠软阴影分隔） ===== */
+.table-wrap{overflow-x:auto;padding:2px}
+table{width:100%;border-collapse:separate;border-spacing:0 8px;min-width:840px}
+thead th{text-align:left;font-size:11px;font-weight:700;color:var(--ink-500);padding:10px 16px;letter-spacing:.04em;white-space:nowrap}
+tbody tr{background:var(--nm-bg);box-shadow:var(--out-xs);transition:box-shadow .2s}
+tbody tr:hover{box-shadow:var(--out-sm)}
+tbody td{padding:14px 16px;font-size:12.5px;color:var(--ink-700);vertical-align:middle}
+tbody td:first-child{border-radius:var(--r-md) 0 0 var(--r-md)}
+tbody td:last-child{border-radius:0 var(--r-md) var(--r-md) 0}
+.p-name{font-weight:700;font-size:13px}
+.p-cat{font-size:11px;color:var(--ink-400);margin-top:3px}
+.plat{display:inline-flex;align-items:center;font-size:11.5px;font-weight:700;padding:4px 11px;border-radius:var(--r-full);box-shadow:var(--out-xs)}
+.plat.douyin{color:#C2185B} .plat.taobao{color:#C2410C} .plat.tmall{color:#B42318}
+.plat.pdd{color:#A61B1B} .plat.jd{color:#B91C1C}
+.price{font-weight:800;color:var(--ink-900);font-variant-numeric:tabular-nums}
+.points{display:flex;flex-wrap:wrap;gap:6px}
+.tag-mini{font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:var(--r-full);box-shadow:var(--in-sm);color:var(--primary-hover)}
+.tag-mini.gold{color:var(--accent-hover)} .tag-mini.muted{color:var(--ink-400)}
+
+/* ===== 12. AI Agent 软面板 ===== */
+.agent{border-radius:var(--r-xl);padding:24px;position:relative;overflow:hidden;
+  background:linear-gradient(145deg,#F1F7F1,#DEE9E0);box-shadow:var(--out)}
+.agent::after{content:"";position:absolute;right:-70px;top:-70px;width:230px;height:230px;border-radius:50%;
+  background:radial-gradient(circle,rgba(184,130,60,.20),transparent 70%)}
+.agent-inner{position:relative;display:flex;align-items:center;gap:24px;flex-wrap:wrap}
+.agent-badge{width:56px;height:56px;flex:0 0 56px;border-radius:var(--r-lg);display:grid;place-items:center;color:#fff;
+  background:linear-gradient(145deg,#4CAF50,var(--primary));box-shadow:0 6px 16px rgba(46,125,50,.3)}
+.agent h2{font-size:15.5px;font-weight:800;color:var(--ink-900)}
+.agent .desc{font-size:12.5px;color:var(--ink-600);margin-top:6px;max-width:62ch}
+.agent-prompts{display:flex;flex-wrap:wrap;gap:9px;margin-top:14px}
+.agent-prompts button{font-size:12px;font-weight:600;padding:8px 14px;border-radius:var(--r-full);color:var(--ink-700);
+  background:var(--nm-bg);box-shadow:var(--out-xs);transition:box-shadow .2s,color .2s}
+.agent-prompts button:hover{box-shadow:var(--out-sm);color:var(--primary-hover)}
+.agent-status{display:inline-flex;align-items:center;gap:8px;font-size:11.5px;font-weight:700;color:var(--ink-600);
+  margin-top:14px;padding:6px 13px;border-radius:var(--r-full);box-shadow:var(--in-sm)}
+.pulse{width:8px;height:8px;border-radius:50%;background:#4CAF50;animation:pulse 1.9s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(1.3)}}
+.agent-cta{margin-left:auto;height:48px;padding:0 26px;border-radius:var(--r-full);font-size:13.5px;font-weight:800;color:#fff;
+  background:linear-gradient(145deg,#4CAF50,var(--primary));box-shadow:0 10px 22px rgba(46,125,50,.34),-3px -3px 8px var(--nm-light);
+  display:inline-flex;align-items:center;gap:9px;transition:transform .2s,box-shadow .2s}
+.agent-cta:hover{transform:translateY(-2px);box-shadow:0 14px 28px rgba(46,125,50,.4)}
+
+/* ===== 13. 响应式 ===== */
+@media (max-width:1280px){
+  .kpi-grid{grid-template-columns:repeat(2,1fr)}
+  .chart-row{grid-template-columns:1fr}
+}
+@media (max-width:1024px){
+  .shell{padding:12px;gap:12px}
+  .sidebar{display:none}
+  .topbar{top:12px}
+  .kpi-val{font-size:30px}
+  .flow{grid-template-columns:repeat(2,1fr)}
+  .search{width:210px} .topbar .crumb{display:none}
+}
+@media (max-width:640px){
+  .shell{padding:10px;gap:10px}
+  .topbar{flex-wrap:wrap;padding:12px 14px;top:10px;gap:10px}
+  .topbar h1{font-size:14px}
+  .search{order:3;width:100%;max-width:none;margin-left:0}
+  .user-name{display:none}
+  .panel{padding:16px 15px;border-radius:var(--r-lg)}
+  .kpi-grid{grid-template-columns:1fr;gap:12px}
+  .kpi-val{font-size:27px}
+  .flow{grid-template-columns:1fr}
+  .store-grid{grid-template-columns:1fr}
+  .ring-wrap{flex-direction:column}
+  .agent-inner{flex-direction:column;align-items:flex-start}
+  .agent-cta{margin-left:0;width:100%;justify-content:center}
+  .panel-head{flex-direction:column;align-items:flex-start}
+  thead th,tbody td{padding:12px 13px}
+  .bars{height:130px;gap:6px;padding:10px}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- ================= 侧边导航（软面板） ================= -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-logo">
+        <svg width="20" height="20" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <circle cx="24" cy="24" r="21" stroke="#4CAF50" stroke-width="4"/>
+          <path d="M24 12 33 19v13H15V19l9-7z" fill="#B8823C"/>
+          <path d="M24 40V26" stroke="#4CAF50" stroke-width="2.6" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="brand-name">禾语农产品智能商管平台<br><span class="brand-sub">禾语农产品AI运营助手</span></div>
+    </div>
+
+    <nav>
+      <div class="nav-label">运营</div>
+      <a class="nav-item active" href="#">
+        <span class="ico"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="2"/><rect x="14" y="3" width="7" height="5" rx="2"/><rect x="14" y="12" width="7" height="9" rx="2"/><rect x="3" y="16" width="7" height="5" rx="2"/></svg></span>
+        工作台
+      </a>
+      <a class="nav-item" href="#">
+        <span class="ico"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><path d="M3 17l5-6 4 4 5-8 4 5"/></svg></span>
+        商品趋势
+      </a>
+      <a class="nav-item" href="#">
+        <span class="ico"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><path d="M12 16V4m0 0L8 8m4-4 4 4M4 20h16"/></svg></span>
+        数据导入<span class="count">3</span>
+      </a>
+
+      <div class="nav-label">增长</div>
+      <a class="nav-item" href="#">
+        <span class="ico"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><rect x="4" y="8" width="16" height="11" rx="3"/><path d="M12 8V4M8 13h.01M16 13h.01"/></svg></span>
+        AI Agent
+      </a>
+
+      <div class="nav-label">系统</div>
+      <a class="nav-item" href="#">
+        <span class="ico"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-2.7 1.1V21a2 2 0 1 1-4 0v-.1A1.6 1.6 0 0 0 7 19.4a1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1A1.6 1.6 0 0 0 3 14a2 2 0 1 1 0-4 1.6 1.6 0 0 0 1.1-2.7l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1A1.6 1.6 0 0 0 9 4.6V4a2 2 0 1 1 4 0v.1A1.6 1.6 0 0 0 15.7 6l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1A1.6 1.6 0 0 0 19.4 11H21a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1z"/></svg></span>
+        模型配置
+      </a>
+
+      <div class="nav-label">店铺</div>
+      <a class="nav-item" href="#"><span class="store-dot on"></span>抖音旗舰店<span class="count">42</span></a>
+      <a class="nav-item" href="#"><span class="store-dot on"></span>淘宝企业店<span class="count">38</span></a>
+      <a class="nav-item" href="#"><span class="store-dot on"></span>天猫官方旗舰店<span class="count">31</span></a>
+      <a class="nav-item" href="#"><span class="store-dot pause"></span>拼多多产地直发<span class="count">19</span></a>
+      <a class="nav-item" href="#"><span class="store-dot on"></span>京东自营店<span class="count">24</span></a>
+    </nav>
+
+    <div class="sidebar-foot">
+      <strong>本期运营健康度 82</strong>
+      较上周 +6 · 数据更新于 10 分钟前
+    </div>
+  </aside>
+
+  <!-- ================= 主区 ================= -->
+  <div class="main">
+
+    <!-- 顶栏 -->
+    <header class="topbar">
+      <h1>工作台</h1>
+      <span class="crumb">/ 新拟态视图</span>
+      <label class="search">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input type="search" placeholder="搜索商品 / 店铺 / SKU" aria-label="搜索商品或店铺" />
+      </label>
+      <button class="btn sm">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 16V4m0 0L8 8m4-4 4 4M4 20h16"/></svg>
+        导入
+      </button>
+      <div class="user">
+        <span class="avatar">禾</span>
+        <span class="user-name">禾语运营总监</span>
+        <button class="btn sm">退出</button>
+      </div>
+    </header>
+
+    <main class="content">
+
+      <!-- ---------- 1. KPI 统计卡 ×4 ---------- -->
+      <section class="kpi-grid" aria-label="核心指标">
+        <article class="kpi">
+          <div class="kpi-label">
+            <span class="kpi-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 21v-8"/></svg></span>
+            商品总数
+          </div>
+          <div class="kpi-val">154<span class="unit">个</span></div>
+          <div class="kpi-foot">
+            <span class="kpi-delta up">▲ 本周新增 12</span>
+            <span class="mini-bars" aria-hidden="true"><i style="height:40%"></i><i style="height:52%"></i><i style="height:46%"></i><i style="height:64%"></i><i style="height:78%"></i><i style="height:100%"></i></span>
+          </div>
+        </article>
+
+        <article class="kpi">
+          <div class="kpi-label">
+            <span class="kpi-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><path d="M4 9V5a1 1 0 0 1 1-1h5M20 9V5a1 1 0 0 0-1-1h-5M4 15v4a1 1 0 0 0 1 1h5M20 15v4a1 1 0 0 1-1 1h-5"/></svg></span>
+            活跃店铺
+          </div>
+          <div class="kpi-val">5<span class="unit">/ 6 家</span></div>
+          <div class="kpi-foot">
+            <span class="kpi-delta up">▲ 本月新开 1 家</span>
+            <span class="mini-bars" aria-hidden="true"><i style="height:50%"></i><i style="height:50%"></i><i style="height:68%"></i><i style="height:68%"></i><i style="height:84%"></i><i style="height:100%"></i></span>
+          </div>
+        </article>
+
+        <article class="kpi accent">
+          <div class="kpi-label">
+            <span class="kpi-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 2.5 15.4 0 18M12 3c-2.5 2.6-2.5 15.4 0 18"/></svg></span>
+            覆盖平台
+          </div>
+          <div class="kpi-val">5<span class="unit">个平台</span></div>
+          <div class="kpi-foot">
+            <span class="kpi-delta flat">— 与上月持平</span>
+            <span class="mini-bars gold" aria-hidden="true"><i style="height:60%"></i><i style="height:60%"></i><i style="height:80%"></i><i style="height:80%"></i><i style="height:80%"></i><i style="height:100%"></i></span>
+          </div>
+        </article>
+
+        <article class="kpi warn">
+          <div class="kpi-label">
+            <span class="kpi-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><path d="M12 9v4M12 17h.01"/><path d="M10.3 4.3 2.6 17.7A1.6 1.6 0 0 0 4 20h16a1.6 1.6 0 0 0 1.4-2.3L13.7 4.3a1.6 1.6 0 0 0-2.8 0z"/></svg></span>
+            未绑定店铺商品
+          </div>
+          <div class="kpi-val">9<span class="unit">个待处理</span></div>
+          <div class="kpi-foot">
+            <span class="kpi-delta down">▼ 需补店铺归属</span>
+            <span class="mini-bars amber" aria-hidden="true"><i style="height:100%"></i><i style="height:86%"></i><i style="height:88%"></i><i style="height:70%"></i><i style="height:58%"></i><i style="height:44%"></i></span>
+          </div>
+        </article>
+      </section>
+
+      <!-- ---------- 2. 图表：软柱状趋势 + 环形占比 ---------- -->
+      <section class="chart-row">
+        <article class="panel">
+          <div class="panel-head">
+            <div><h2>近 12 个月商品增长</h2><p>口径：商品建档数（含 SKU 展开前的主商品）</p></div>
+            <span class="pill gold raised">10 月 · 当前</span>
+          </div>
+          <div class="bars" role="img" aria-label="近 12 个月商品增长柱状图，整体呈上升趋势">
+            <div class="col"><div class="fill" style="height:34%"></div></div>
+            <div class="col"><div class="fill" style="height:42%"></div></div>
+            <div class="col"><div class="fill" style="height:38%"></div></div>
+            <div class="col"><div class="fill" style="height:52%"></div></div>
+            <div class="col"><div class="fill" style="height:48%"></div></div>
+            <div class="col"><div class="fill" style="height:60%"></div></div>
+            <div class="col"><div class="fill" style="height:56%"></div></div>
+            <div class="col"><div class="fill" style="height:70%"></div></div>
+            <div class="col"><div class="fill" style="height:66%"></div></div>
+            <div class="col"><div class="fill" style="height:82%"></div></div>
+            <div class="col"><div class="fill" style="height:92%"></div></div>
+            <div class="col"><div class="fill" style="height:100%"></div></div>
+          </div>
+          <div class="bars-x">
+            <span>11月</span><span>12月</span><span>1月</span><span>2月</span><span>3月</span><span>4月</span>
+            <span>5月</span><span>6月</span><span>7月</span><span>8月</span><span>9月</span><span>10月</span>
+          </div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-head">
+            <div><h2>平台商品占比</h2><p>按商品主平台去重统计</p></div>
+            <span class="pill">共 154 个</span>
+          </div>
+          <div class="ring-wrap">
+            <div class="ring">
+              <div class="ring-slot"><div class="ring-center"><b>46%</b><span>抖音</span></div></div>
+            </div>
+            <div class="ring-legend">
+              <div><span class="sw" style="background:#2E7D32"></span>抖音<b>71</b></div>
+              <div><span class="sw" style="background:#B8823C"></span>淘宝 / 天猫<b>40</b></div>
+              <div><span class="sw" style="background:#4C7DD8"></span>拼多多 / 京东<b>25</b></div>
+              <div><span class="sw" style="background:#D6DFD8"></span>未绑定<b>18</b></div>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <!-- ---------- 3. 排行榜 ---------- -->
+      <section class="panel">
+        <div class="panel-head">
+          <div><h2>商品动销排行 TOP 5</h2><p>按近 30 天动销件数排序，决定投放与库存优先级</p></div>
+          <button class="btn sm">查看完整榜单</button>
+        </div>
+        <div class="rank">
+          <div class="rank-row"><span class="rank-no">1</span>
+            <div><p class="rank-name">有机山泉稻花香大米 5kg</p><div class="rank-track"><i style="width:96%"></i></div></div>
+            <span class="rank-val">2,840 件</span></div>
+          <div class="rank-row"><span class="rank-no">2</span>
+            <div><p class="rank-name">东北野生蓝莓 500g</p><div class="rank-track"><i style="width:78%"></i></div></div>
+            <span class="rank-val">2,310 件</span></div>
+          <div class="rank-row"><span class="rank-no">3</span>
+            <div><p class="rank-name">有机黑猪五花肉 2.5kg</p><div class="rank-track"><i style="width:64%"></i></div></div>
+            <span class="rank-val">1,890 件</span></div>
+          <div class="rank-row"><span class="rank-no">4</span>
+            <div><p class="rank-name">高山冷榨菜籽油 5L</p><div class="rank-track"><i style="width:49%"></i></div></div>
+            <span class="rank-val">1,450 件</span></div>
+          <div class="rank-row"><span class="rank-no">5</span>
+            <div><p class="rank-name">五常稻香米礼盒装</p><div class="rank-track"><i style="width:37%"></i></div></div>
+            <span class="rank-val">1,090 件</span></div>
+        </div>
+      </section>
+
+      <!-- ---------- 4. 工作流引导 ---------- -->
+      <section class="panel">
+        <div class="panel-head">
+          <div><h2>运营工作流</h2><p>建店建档 → 导入数据 → 补商品信息 → 投放建议 → 周期复盘</p></div>
+          <span class="pill info">进度 3 / 5</span>
+        </div>
+        <div class="flow">
+          <div class="step done">
+            <div class="no">✓</div><h3>建店建档</h3>
+            <p>5 家平台店铺、154 个商品，9 个商品待绑定店铺</p>
+            <span class="tag">已完成</span>
+          </div>
+          <div class="step done">
+            <div class="no">✓</div><h3>导入数据</h3>
+            <p>商品 / SKU / 绩效三类数据已导入，3 个缺平台 ID</p>
+            <span class="tag">已完成</span>
+          </div>
+          <div class="step current">
+            <div class="no">3</div><h3>补商品信息</h3>
+            <p>12 个商品待补卖点与主图，补齐后可生成投放建议</p>
+            <span class="tag">进行中</span>
+          </div>
+          <div class="step">
+            <div class="no">4</div><h3>投放建议</h3>
+            <p>基于素材与链接生成投放实验方案，沉淀到单品</p>
+            <span class="tag">待开始</span>
+          </div>
+          <div class="step">
+            <div class="no">5</div><h3>周期复盘</h3>
+            <p>回填经营数据后自动生成复盘报告</p>
+            <span class="tag">待开始</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---------- 5. 店铺视图（含平台筛选按钮组） ---------- -->
+      <section class="panel">
+        <div class="panel-head">
+          <div><h2>店铺视图</h2><p>按平台和店铺归拢商品，先把多平台运营入口铺出来</p></div>
+          <div class="filters" role="group" aria-label="平台筛选">
+            <button class="active">全部平台</button><button>抖音</button><button>淘宝</button>
+            <button>天猫</button><button>拼多多</button><button>京东</button>
+          </div>
+        </div>
+        <div class="store-grid">
+          <article class="store">
+            <div class="store-top">
+              <div class="store-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 9V5h16v4M3 9h18l-1.2 10.2A2 2 0 0 1 17.8 21H6.2a2 2 0 0 1-2-1.8L3 9z"/></svg></div>
+              <div style="min-width:0;flex:1"><h3>抖音旗舰店</h3><div class="meta">抖音 · 直播 + 商城</div></div>
+              <span class="pill ok raised">启用</span>
+            </div>
+            <div class="store-stats"><div><p>商品数</p><b>71</b></div><div><p>负责人</p><b style="font-size:13px">李苗</b></div></div>
+            <div class="store-actions"><button class="btn sm">筛选商品</button><button class="btn sm primary">店铺详情</button></div>
+          </article>
+
+          <article class="store gold">
+            <div class="store-top">
+              <div class="store-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 9V5h16v4M3 9h18l-1.2 10.2A2 2 0 0 1 17.8 21H6.2a2 2 0 0 1-2-1.8L3 9z"/></svg></div>
+              <div style="min-width:0;flex:1"><h3>淘宝企业店</h3><div class="meta">淘宝 · 农产品类目</div></div>
+              <span class="pill ok raised">启用</span>
+            </div>
+            <div class="store-stats"><div><p>商品数</p><b>38</b></div><div><p>负责人</p><b style="font-size:13px">周成</b></div></div>
+            <div class="store-actions"><button class="btn sm">筛选商品</button><button class="btn sm primary">店铺详情</button></div>
+          </article>
+
+          <article class="store gold">
+            <div class="store-top">
+              <div class="store-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 9V5h16v4M3 9h18l-1.2 10.2A2 2 0 0 1 17.8 21H6.2a2 2 0 0 1-2-1.8L3 9z"/></svg></div>
+              <div style="min-width:0;flex:1"><h3>天猫官方旗舰店</h3><div class="meta">天猫 · 品牌自营</div></div>
+              <span class="pill ok raised">启用</span>
+            </div>
+            <div class="store-stats"><div><p>商品数</p><b>31</b></div><div><p>负责人</p><b style="font-size:13px">吴桐</b></div></div>
+            <div class="store-actions"><button class="btn sm">筛选商品</button><button class="btn sm primary">店铺详情</button></div>
+          </article>
+
+          <article class="store">
+            <div class="store-top">
+              <div class="store-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 9V5h16v4M3 9h18l-1.2 10.2A2 2 0 0 1 17.8 21H6.2a2 2 0 0 1-2-1.8L3 9z"/></svg></div>
+              <div style="min-width:0;flex:1"><h3>拼多多产地直发</h3><div class="meta">拼多多 · 农产品源头店</div></div>
+              <span class="pill warn raised">暂停</span>
+            </div>
+            <div class="store-stats"><div><p>商品数</p><b>19</b></div><div><p>负责人</p><b style="font-size:13px">赵磊</b></div></div>
+            <div class="store-actions"><button class="btn sm">筛选商品</button><button class="btn sm primary">店铺详情</button></div>
+          </article>
+
+          <article class="store">
+            <div class="store-top">
+              <div class="store-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 9V5h16v4M3 9h18l-1.2 10.2A2 2 0 0 1 17.8 21H6.2a2 2 0 0 1-2-1.8L3 9z"/></svg></div>
+              <div style="min-width:0;flex:1"><h3>京东自营店</h3><div class="meta">京东 · 自营入仓</div></div>
+              <span class="pill ok raised">启用</span>
+            </div>
+            <div class="store-stats"><div><p>商品数</p><b>24</b></div><div><p>负责人</p><b style="font-size:13px">陈默</b></div></div>
+            <div class="store-actions"><button class="btn sm">筛选商品</button><button class="btn sm primary">店铺详情</button></div>
+          </article>
+
+          <article class="store todo">
+            <div class="store-top">
+              <div class="store-icon" style="color:var(--warning)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><path d="M12 9v4M12 17h.01"/><path d="M10.3 4.3 2.6 17.7A1.6 1.6 0 0 0 4 20h16a1.6 1.6 0 0 0 1.4-2.3L13.7 4.3a1.6 1.6 0 0 0-2.8 0z"/></svg></div>
+              <div style="min-width:0;flex:1"><h3>未绑定店铺商品</h3><div class="meta">补店铺归属后才能进投放</div></div>
+              <span class="pill warn raised">待处理</span>
+            </div>
+            <div class="store-stats"><div><p>待归属商品</p><b>9</b></div><div><p>负责人</p><b style="font-size:13px">待指派</b></div></div>
+            <div class="store-actions"><button class="btn sm warn">批量归属</button></div>
+          </article>
+        </div>
+      </section>
+
+      <!-- ---------- 6. 商品池表格 + 平台筛选 ---------- -->
+      <section class="panel">
+        <div class="panel-head">
+          <div><h2>商品池</h2><p>当前筛选：全部平台 · 全部店铺 · 命中 5 / 154 个商品</p></div>
+          <span class="pill">共 154 个</span>
+        </div>
+        <div class="filters" style="margin-bottom:14px" role="group" aria-label="平台筛选按钮组">
+          <button class="active">全部平台</button><button>抖音</button><button>淘宝</button>
+          <button>天猫</button><button>拼多多</button><button>京东</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>商品</th><th>店铺</th><th>平台</th><th>售价</th><th>卖点</th><th>操作</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><div class="p-name">有机山泉稻花香大米 5kg</div><div class="p-cat">粮油 / 大米</div></td>
+                <td>抖音旗舰店</td><td><span class="plat douyin">抖音</span></td><td><span class="price">¥ 89.00</span></td>
+                <td><div class="points"><span class="tag-mini">山泉灌溉</span><span class="tag-mini">现磨现发</span></div></td>
+                <td><button class="btn sm">进入 →</button></td>
+              </tr>
+              <tr>
+                <td><div class="p-name">有机黑猪五花肉 2.5kg</div><div class="p-cat">肉禽 / 猪肉</div></td>
+                <td>天猫官方旗舰店</td><td><span class="plat tmall">天猫</span></td><td><span class="price">¥ 168.00</span></td>
+                <td><div class="points"><span class="tag-mini">有机认证</span><span class="tag-mini">冷链直达</span></div></td>
+                <td><button class="btn sm">进入 →</button></td>
+              </tr>
+              <tr>
+                <td><div class="p-name">东北野生蓝莓 500g</div><div class="p-cat">水果 / 浆果</div></td>
+                <td>淘宝企业店</td><td><span class="plat taobao">淘宝</span></td><td><span class="price">¥ 59.90</span></td>
+                <td><div class="points"><span class="tag-mini">野生采摘</span><span class="tag-mini gold">顺丰包邮</span></div></td>
+                <td><button class="btn sm">进入 →</button></td>
+              </tr>
+              <tr>
+                <td><div class="p-name">高山冷榨菜籽油 5L</div><div class="p-cat">粮油 / 食用油</div></td>
+                <td>京东自营店</td><td><span class="plat jd">京东</span></td><td><span class="price">¥ 119.00</span></td>
+                <td><div class="points"><span class="tag-mini">物理压榨</span><span class="tag-mini muted">待补卖点</span></div></td>
+                <td><button class="btn sm">进入 →</button></td>
+              </tr>
+              <tr>
+                <td><div class="p-name">五常稻香米礼盒装</div><div class="p-cat">粮油 / 礼盒</div></td>
+                <td style="color:var(--warning);font-weight:700">未绑定</td><td><span class="plat pdd">拼多多</span></td><td><span class="price">¥ 139.00</span></td>
+                <td><div class="points"><span class="tag-mini muted">待补卖点</span></div></td>
+                <td><button class="btn sm">进入 →</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ---------- 7. AI Agent 入口 ---------- -->
+      <section class="agent">
+        <div class="agent-inner">
+          <div class="agent-badge">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="4" y="8" width="16" height="11" rx="3"/><path d="M12 8V4M8 13h.01M16 13h.01"/></svg>
+          </div>
+          <div style="flex:1;min-width:250px">
+            <h2>AI Agent · 一键驱动运营闭环</h2>
+            <p class="desc">把「补信息 → 出素材 → 投放建议 → 复盘」交给 Agent 串起来跑。它会先诊断商品缺失项，再给出可执行的下一步。</p>
+            <div class="agent-prompts">
+              <button>帮我补齐 12 个商品的卖点</button>
+              <button>抖音爆品该加大投放吗？</button>
+              <button>生成本周周期复盘</button>
+            </div>
+            <div class="agent-status"><span class="pulse"></span>Agent 空闲 · 上次运行 3 小时前 · 已完成 6 个任务</div>
+          </div>
+          <button class="agent-cta">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" aria-hidden="true"><path d="M5 3l14 9-14 9V3z"/></svg>
+            启动 Agent
+          </button>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+</body>
+</html>

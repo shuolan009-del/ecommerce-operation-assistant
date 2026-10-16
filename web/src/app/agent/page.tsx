@@ -415,7 +415,7 @@ function JsonPanel({ title, value }: { title: string; value: Record<string, unkn
   return (
     <div className="rounded-md bg-surface-muted p-3">
       <p className="text-xs font-semibold text-muted">{title}</p>
-      <pre className="mt-2 max-h-64 overflow-auto whitespace-pre-wrap text-xs leading-5 text-slate-700">{Object.keys(value).length ? JSON.stringify(value, null, 2) : "暂无"}</pre>
+      <pre className="mt-2 max-h-64 overflow-auto whitespace-pre-wrap text-xs leading-5 text-body">{Object.keys(value).length ? JSON.stringify(value, null, 2) : "暂无"}</pre>
     </div>
   );
 }

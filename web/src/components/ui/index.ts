@@ -20,10 +20,6 @@ export {
   Input,
   Select,
   Textarea,
-  inputClass,
-  labelClass,
-  selectClass,
-  textareaClass,
 } from "./field";
 export type { FormAlertTone } from "./field";
 

@@ -15,7 +15,25 @@ import type {
   UserAccount,
   WorkspaceAccess,
 } from "@/types";
-import { authHeaders, workspaceAuthHeaders } from "./session";
+import { authHeaders, isDemoMode, workspaceAuthHeaders } from "./session";
+import {
+  demoProducts,
+  demoStores,
+  findDemoStoreById,
+  demoStoreInventorySummary,
+  demoStoreInventoryMovements,
+  findDemoProductById,
+  demoAgentRuns,
+  demoWorkspaces,
+  demoAgentCatalog,
+  demoAgentTasks,
+  demoAgentApprovals,
+  demoAgentMemories,
+  demoWorkspaceProducts,
+  demoWorkspaceStores,
+  demoModelSettings,
+  demoUsers,
+} from "./fixtures";
 
 const API_BASE_URL =
   process.env.API_INTERNAL_BASE_URL ??
@@ -24,6 +42,8 @@ const API_BASE_URL =
 
 /** 请求后端获取商品接口，统一处理认证、Workspace、错误和强类型响应。 */
 export async function getProducts(): Promise<Product[]> {
+  if (await isDemoMode()) return demoProducts;
+
   try {
     // 工作台服务端渲染依赖实时运营数据，禁用缓存，避免导入或生成后仍看到旧状态。
     const response = await fetch(`${API_BASE_URL}/api/v1/products`, {
@@ -43,6 +63,8 @@ export async function getProducts(): Promise<Product[]> {
 
 /** 请求后端获取stores接口，统一处理认证、Workspace、错误和强类型响应。 */
 export async function getStores(): Promise<Store[]> {
+  if (await isDemoMode()) return demoStores;
+
   try {
     const response = await fetch(`${API_BASE_URL}/api/v1/stores`, {
       headers: await authHeaders(),
@@ -61,6 +83,8 @@ export async function getStores(): Promise<Store[]> {
 
 /** 请求后端获取店铺接口，统一处理认证、Workspace、错误和强类型响应。 */
 export async function getStore(id: string): Promise<Store | null> {
+  if (await isDemoMode()) return findDemoStoreById(Number(id));
+
   try {
     const response = await fetch(`${API_BASE_URL}/api/v1/stores/${id}`, {
       headers: await authHeaders(),
@@ -79,6 +103,8 @@ export async function getStore(id: string): Promise<Store | null> {
 
 /** 请求后端获取店铺库存汇总接口，统一处理认证、Workspace、错误和强类型响应。 */
 export async function getStoreInventorySummary(id: string): Promise<StoreInventorySummary | null> {
+  if (await isDemoMode()) return demoStoreInventorySummary(Number(id));
+
   try {
     const response = await fetch(`${API_BASE_URL}/api/v1/stores/${id}/inventory-summary`, {
       headers: await authHeaders(),
@@ -97,6 +123,8 @@ export async function getStoreInventorySummary(id: string): Promise<StoreInvento
 
 /** 请求后端获取店铺库存movements接口，统一处理认证、Workspace、错误和强类型响应。 */
 export async function getStoreInventoryMovements(id: string): Promise<StoreInventoryMovementRow[]> {
+  if (await isDemoMode()) return demoStoreInventoryMovements(Number(id));
+
   try {
     const response = await fetch(`${API_BASE_URL}/api/v1/stores/${id}/inventory-movements`, {
       headers: await authHeaders(),
@@ -115,6 +143,8 @@ export async function getStoreInventoryMovements(id: string): Promise<StoreInven
 
 /** 请求后端获取商品接口，统一处理认证、Workspace、错误和强类型响应。 */
 export async function getProduct(id: string): Promise<ProductDetail | null> {
+  if (await isDemoMode()) return findDemoProductById(Number(id));
+
   try {
     // 商品详情页一次读取完整单品闭环数据，后续 tab 只在页面内做展示切换。
     const response = await fetch(`${API_BASE_URL}/api/v1/products/${id}`, {
@@ -134,6 +164,9 @@ export async function getProduct(id: string): Promise<ProductDetail | null> {
 
 /** 请求后端获取投放实验看板接口，统一处理认证、Workspace、错误和强类型响应。 */
 export async function getAdExperimentDashboard(id: string): Promise<AdExperimentDashboard | null> {
+  // 演示模式暂无看板 fixture，返回 null 让页面走空态。
+  if (await isDemoMode()) return null;
+
   try {
     const response = await fetch(`${API_BASE_URL}/api/v1/products/${id}/ad-experiments/dashboard`, {
       headers: await authHeaders(),
@@ -152,6 +185,8 @@ export async function getAdExperimentDashboard(id: string): Promise<AdExperiment
 
 /** 请求后端获取Agent运行接口，统一处理认证、Workspace、错误和强类型响应。 */
 export async function getAgentRuns(id: string): Promise<AgentRun[]> {
+  if (await isDemoMode()) return demoAgentRuns;
+
   try {
     const response = await fetch(`${API_BASE_URL}/api/v1/products/${id}/agent-runs`, {
       headers: await authHeaders(),
@@ -170,11 +205,15 @@ export async function getAgentRuns(id: string): Promise<AgentRun[]> {
 
 /** 请求后端获取Workspace接口，统一处理认证、Workspace、错误和强类型响应。 */
 export async function getWorkspaces(): Promise<WorkspaceAccess[]> {
+  if (await isDemoMode()) return demoWorkspaces;
+
   return fetchAgentResource<WorkspaceAccess[]>("/api/v1/workspaces", await authHeaders());
 }
 
 /** 请求后端获取Agentcatalog接口，统一处理认证、Workspace、错误和强类型响应。 */
 export async function getAgentCatalog(workspaceId: number): Promise<AgentCatalog | null> {
+  if (await isDemoMode()) return demoAgentCatalog;
+
   return fetchAgentResource<AgentCatalog | null>(
     `/api/v1/workspaces/${workspaceId}/agent/catalog`,
     await workspaceAuthHeaders(workspaceId),
@@ -183,6 +222,8 @@ export async function getAgentCatalog(workspaceId: number): Promise<AgentCatalog
 
 /** 请求后端获取Agent任务接口，统一处理认证、Workspace、错误和强类型响应。 */
 export async function getAgentTasks(workspaceId: number): Promise<AgentTask[]> {
+  if (await isDemoMode()) return demoAgentTasks;
+
   return fetchAgentResource<AgentTask[]>(
     `/api/v1/workspaces/${workspaceId}/agent/tasks`,
     await workspaceAuthHeaders(workspaceId),
@@ -191,6 +232,8 @@ export async function getAgentTasks(workspaceId: number): Promise<AgentTask[]> {
 
 /** 请求后端获取Agent审批接口，统一处理认证、Workspace、错误和强类型响应。 */
 export async function getAgentApprovals(workspaceId: number): Promise<AgentApproval[]> {
+  if (await isDemoMode()) return demoAgentApprovals;
+
   return fetchAgentResource<AgentApproval[]>(
     `/api/v1/workspaces/${workspaceId}/agent/approvals`,
     await workspaceAuthHeaders(workspaceId),
@@ -199,6 +242,8 @@ export async function getAgentApprovals(workspaceId: number): Promise<AgentAppro
 
 /** 请求后端获取Agent记忆接口，统一处理认证、Workspace、错误和强类型响应。 */
 export async function getAgentMemories(workspaceId: number): Promise<AgentMemory[]> {
+  if (await isDemoMode()) return demoAgentMemories;
+
   return fetchAgentResource<AgentMemory[]>(
     `/api/v1/workspaces/${workspaceId}/agent/memories`,
     await workspaceAuthHeaders(workspaceId),
@@ -207,6 +252,8 @@ export async function getAgentMemories(workspaceId: number): Promise<AgentMemory
 
 /** 请求后端获取Workspace商品接口，统一处理认证、Workspace、错误和强类型响应。 */
 export async function getWorkspaceProducts(workspaceId: number): Promise<Product[]> {
+  if (await isDemoMode()) return demoWorkspaceProducts;
+
   return fetchAgentResource<Product[]>(
     "/api/v1/products",
     await workspaceAuthHeaders(workspaceId),
@@ -215,6 +262,8 @@ export async function getWorkspaceProducts(workspaceId: number): Promise<Product
 
 /** 请求后端获取Workspacestores接口，统一处理认证、Workspace、错误和强类型响应。 */
 export async function getWorkspaceStores(workspaceId: number): Promise<Store[]> {
+  if (await isDemoMode()) return demoWorkspaceStores;
+
   return fetchAgentResource<Store[]>(
     "/api/v1/stores",
     await workspaceAuthHeaders(workspaceId),
@@ -223,6 +272,8 @@ export async function getWorkspaceStores(workspaceId: number): Promise<Store[]> 
 
 /** 请求后端获取model模型设置接口，统一处理认证、Workspace、错误和强类型响应。 */
 export async function getModelSettings(): Promise<ModelSettings | null> {
+  if (await isDemoMode()) return demoModelSettings;
+
   try {
     // 模型配置接口只返回脱敏 key，页面可展示配置状态但拿不到明文供应商密钥。
     const response = await fetch(`${API_BASE_URL}/api/v1/model-settings`, {
@@ -242,6 +293,8 @@ export async function getModelSettings(): Promise<ModelSettings | null> {
 
 /** 请求后端获取users接口，统一处理认证、Workspace、错误和强类型响应。 */
 export async function getUsers(): Promise<UserAccount[]> {
+  if (await isDemoMode()) return demoUsers;
+
   try {
     const response = await fetch(`${API_BASE_URL}/api/v1/users`, {
       headers: await authHeaders(),
@@ -260,6 +313,9 @@ export async function getUsers(): Promise<UserAccount[]> {
 
 /** 请求后端登录接口，统一处理认证、Workspace、错误和强类型响应。 */
 export async function login(email: string, password: string): Promise<AuthToken | null> {
+  // 演示模式不走真实登录，直接返回 null 保持未登录态。
+  if (await isDemoMode()) return null;
+
   try {
     // 登录失败统一返回 null，让页面只展示通用错误，避免泄露账号是否存在。
     const response = await fetch(`${API_BASE_URL}/api/v1/auth/login`, {
@@ -280,6 +336,9 @@ export async function login(email: string, password: string): Promise<AuthToken 
 
 /** 请求后端获取当前用户接口，统一处理认证、Workspace、错误和强类型响应。 */
 export async function getCurrentUser(token: string): Promise<UserAccount | null> {
+  // 演示模式模拟已登录状态，固定返回第一个演示账号。
+  if (await isDemoMode()) return demoUsers[0] ?? null;
+
   try {
     const response = await fetch(`${API_BASE_URL}/api/v1/auth/me`, {
       headers: { Authorization: `Bearer ${token}` },

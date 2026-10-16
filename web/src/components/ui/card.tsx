@@ -24,23 +24,23 @@ export function Card({
   return (
     <section
       className={[
-        "overflow-hidden rounded-lg border border-slate-200 bg-white shadow-card",
+        "overflow-hidden rounded-lg border border-hairline bg-surface shadow-card",
         className ?? "",
       ]
         .filter(Boolean)
         .join(" ")}
     >
       {hasHeader ? (
-        <div className="flex flex-col gap-2 border-b border-slate-100 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-2 border-b border-hairline-subtle px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-start gap-2.5">
             <span
               aria-hidden="true"
               className="mt-0.5 h-4 w-[3px] shrink-0 rounded-full bg-brand"
             />
             <div className="min-w-0">
-              <h2 className="text-sm font-semibold text-slate-950">{title}</h2>
+              <h2 className="text-sm font-semibold text-strong">{title}</h2>
               {description ? (
-                <p className="mt-0.5 text-xs text-slate-500">{description}</p>
+                <p className="mt-0.5 text-xs text-muted">{description}</p>
               ) : null}
             </div>
           </div>
