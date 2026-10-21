@@ -190,7 +190,15 @@ def _parse_row(
     errors: list[str] = []
     product = _resolve_product(db, row, errors)
     period_start = _parse_date(row.get("period_start", ""), "period_start", errors)
-    period_end = _parse_date(row.get("period_end", ""), "period_end", errors) or period_start
+    # period_end 允许留空：单日经营数据只填开始日期即可，默认与 period_start 相同。
+    # 不能图省事写成 _parse_date(...) or period_start——_parse_date 会先给空值追加
+    # 一条 "period_end 不能为空" 错误，合法行会被误判为 error、导入时整行跳过。
+    period_end_value = row.get("period_end", "").strip()
+    period_end = (
+        _parse_date(period_end_value, "period_end", errors) if period_end_value else period_start
+    )
+    if period_start and period_end and period_end < period_start:
+        errors.append("period_end 不能早于 period_start")
     product_name = row.get("product_name") or row.get("external_product_id")
 
     creative_plan_id = _parse_optional_int(row.get("creative_plan_id", ""), "creative_plan_id", errors)
